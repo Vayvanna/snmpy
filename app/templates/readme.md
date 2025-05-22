@@ -1,1 +1,0 @@
-#html templates for jinja2.

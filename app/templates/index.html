@@ -1,0 +1,26 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SNMPy - Home</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>SNMPy Network Monitoring</h1>
+        <p class="stats">Sites Up: {{ stats.sites_up }}</p>
+        <p class="stats">Sites Down: {{ stats.sites_down }}</p>
+
+        <!-- Image (Optional logo) -->
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SNMPy Logo" class="logo">
+
+        <!-- Button to go to map page -->
+        <a href="/map" class="btn">View Map</a>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
