@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Map View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 90vh; width: 100%; }
+    body { margin: 0; font-family: sans-serif; }
+    h2 { text-align: center; margin: 1em 0; }
+  </style>
+</head>
+<body>
+  <h2>Map of Sites</h2>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize map centered on Tunisia
+    var map = L.map('map').setView([34.0, 9.0], 6); // [lat, lon], zoom
+
+    // Load OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Locations passed from Flask (injected via Jinja)
+    const locations = {{ locations | tojson }};
+
+    // Add markers
+    locations.forEach(site => {
+      L.marker([site.lat, site.lon]).addTo(map)
+        .bindPopup(`<b>${site.name}</b>`);
+    });
+  </script>
+</body>
+</html>
