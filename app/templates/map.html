@@ -19,22 +19,84 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // Initialize map centered on Tunisia
-    var map = L.map('map').setView([34.0, 9.0], 6); // [lat, lon], zoom
+    const map = L.map('map').setView([34.5, 9.3], 6);
 
-    // Load OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Locations passed from Flask (injected via Jinja)
-    const locations = {{ locations | tojson }};
+    const markers = {}; // store markers by ID
 
-    // Add markers
-    locations.forEach(site => {
-      L.marker([site.lat, site.lon]).addTo(map)
-        .bindPopup(`<b>${site.name}</b>`);
-    });
+    async function loadMarkers() {
+        try {
+            const response = await fetch("/api/sites_status");
+            const data = await response.json();
+
+            console.log("Fetched site data:", data);
+            console.log("Number of sites fetched:", Object.keys(data).length);
+
+            for (const id in data) {
+                const site = data[id];
+
+                if (!site.lat || !site.lon) {
+                    console.warn(`⚠️ Skipping site ${id} (${site.name}) due to missing coordinates.`, site);
+                    continue;
+                }
+
+                const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+
+                const marker = L.circleMarker([site.lat, site.lon], {
+                    radius: 8,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.9
+                })
+                .addTo(map)
+                .bindPopup(`<b>${site.name}</b><br>Status: ${site.status}`);
+
+                markers[id] = marker;
+
+                console.log(`✅ Added marker for ${site.name} (${site.status})`);
+            }
+        } catch (error) {
+            console.error("❌ Failed to load markers:", error);
+        }
+    }
+
+
+
+    async function updateSiteStatuses() {
+        try {
+            const response = await fetch("/api/sites_status");
+            const data = await response.json();
+
+            console.log("🔄 Updating site statuses");
+
+            for (const id in data) {
+                const site = data[id];
+                const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+
+                if (!markers[id]) {
+                    console.warn(`⚠️ No existing marker found for site ID ${id} (${site.name})`);
+                    continue;
+                }
+
+                markers[id].setStyle({ color: color, fillColor: color });
+                markers[id].setPopupContent(`<b>${site.name}</b><br>Status: ${site.status}`);
+
+                console.log(`✅ Updated marker for ${site.name}: ${site.status}`);
+            }
+        } catch (error) {
+            console.error("❌ Failed to update site statuses:", error);
+        }
+    }
+
+
+    // Initial load
+    loadMarkers();
+    // Refresh status every 15s
+    setInterval(updateSiteStatuses, 15000);
   </script>
 </body>
 </html>
