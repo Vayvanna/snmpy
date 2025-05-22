@@ -1,0 +1,1 @@
+# this is the file that pings devices. and tells if they are responding or not.

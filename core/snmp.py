@@ -1,0 +1,1 @@
+# this is the file that gets snmp data from devices. "and tells if they are responding or not"
