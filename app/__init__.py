@@ -5,8 +5,9 @@ from app.routes import main_bp ##  importing the main: the mini-app blueprint ob
 
 from flask_sqlalchemy import SQLAlchemy # importing sqlalchemy.
 from config import Config # importing config.py at root level.
-from app.extensions import db
-from core.init_sites import sync_sites_from_json  # ✅ Now cleanly imports db
+from app.extensions import db  # ✅ Now cleanly imports db
+from core.init_sites import sync_sites_from_json
+from app.admin import init_admin  #####importing the init_admin function that attaches the the app & 
 # db = SQLAlchemy() 
 
 def create_app():  ## this function is to configure the Flask app.
@@ -22,10 +23,12 @@ def create_app():  ## this function is to configure the Flask app.
     app.register_blueprint(main_bp) ## registering our main mini-app inside the app.
     
     with app.app_context():
-        sync_sites_from_json()           # ✅ auto-import on startup
+        sync_sites_from_json()           # ✅ auto-import on startup # to disable tempo
         from core.poller import start_background_thread
         start_background_thread(app)
 
+        #####this is the part for the flask_Admin
+        init_admin(app)
     return app
     
 #     return app ## returning the configured app instance.

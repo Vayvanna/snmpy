@@ -2,9 +2,9 @@ import threading
 import time
 import subprocess
 from flask import current_app
-from db.models import Site # Import your SQLAlchemy model and session object
+from db.models import Site,SiteLogs # Import your SQLAlchemy model and session object
 from app.extensions import db
-
+import datetime
 def ping_site(ip):
     """Pings a site using ICMP."""
     try:
@@ -21,10 +21,19 @@ def poll_sites(app):
 
             for site in sites:
                 result = ping_site(site.ip_address)
-                site.status = result  # Update the status field
+                site.status = result  # Update the site row
 
-            db.session.commit()  # Persist all updates
-            time.sleep(15)  # Wait 15 seconds before next polling round
+                # ✅ Create new log entry
+                log = SiteLogs(
+                    site_id=site.id,
+                    status=result  # or leave out if model default is set
+                )
+                db.session.add(log)
+                # print(f"[LOG] {site.name} is {result} — log inserted")
+
+
+            db.session.commit()  # Save both status update + logs
+            time.sleep(15)  # Next polling round
 
 def start_background_thread(app):
     thread = threading.Thread(target=poll_sites, args=(app,))
