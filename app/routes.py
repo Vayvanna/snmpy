@@ -12,6 +12,7 @@ from flask import Blueprint, jsonify, render_template
 import subprocess # for pings
 
 from core.poller import full_site_status
+from snmpy.db.models import Site
 
 
 
@@ -53,33 +54,65 @@ def ping_host(ip):
 
 
 
+# @main_bp.route('/map')
+# def map():
+#     # sites = [
+#     #     {"name": "Tunis - Direction IT","lat":36.8144, "lon": 10.1759, 'ip': '8.8.8.8'}, ##direction IT 
+#     #     {"name": "Siege","lat": 36.8219, "lon": 10.1942, 'ip': '192.168.100.0'}, ##siege 
+#     #     {"name": "Sfax ", "lat": 34.7390, "lon": 10.7603, 'ip': '1.1.1.1'},  # Sfax
+#     #     {"name": "Hammamet ", "lat": 36.4058, "lon": 10.6047, 'ip': '8.8.4.4'},  # Hammamet 
+#     # ]
+
+#     # sites_locations=[]
+#     # for site in sites:
+#     #     is_up = ping_host(site["ip"])
+#     #     status= "UP" if is_up else "DOWN"
+#     #     sites_locations.append({
+#     #         "name":site["name"],
+#     #         "lat":site["lat"],
+#     #         "lon":site["lon"],
+#     #         "status":status,
+#     #     }
+#     #     )
+#     locations=list(full_site_status)
+#     print(full_site_status)
+#     print(list(locations))
+
+#     return render_template('map.html', locations=locations)
+
 @main_bp.route('/map')
 def map():
-    # sites = [
-    #     {"name": "Tunis - Direction IT","lat":36.8144, "lon": 10.1759, 'ip': '8.8.8.8'}, ##direction IT 
-    #     {"name": "Siege","lat": 36.8219, "lon": 10.1942, 'ip': '192.168.100.0'}, ##siege 
-    #     {"name": "Sfax ", "lat": 34.7390, "lon": 10.7603, 'ip': '1.1.1.1'},  # Sfax
-    #     {"name": "Hammamet ", "lat": 36.4058, "lon": 10.6047, 'ip': '8.8.4.4'},  # Hammamet 
-    # ]
+    sites = Site.query.all() # goes to Site in db.models and queries everything, and puts it in sites, 
+    # Convert to dict for frontend
+    locations = {     #creates list: locations as following, while pulling from sites which we got from Site.models.db.
+        str(site.id): {
+            "name": site.name,
+            "lat": site.latitude,
+            "lon": site.longitude,
+            "status": site.status
+        }
+        for site in sites
+    }
+    return render_template("map.html", locations=locations)
 
-    # sites_locations=[]
-    # for site in sites:
-    #     is_up = ping_host(site["ip"])
-    #     status= "UP" if is_up else "DOWN"
-    #     sites_locations.append({
-    #         "name":site["name"],
-    #         "lat":site["lat"],
-    #         "lon":site["lon"],
-    #         "status":status,
-    #     }
-    #     )
-    locations=list(full_site_status)
-    print(full_site_status)
-    print(list(locations))
 
-    return render_template('map.html', locations=locations)
 
+
+
+# @main_bp.route('/api/sites_status')
+# def api_sites_status():
+#     return jsonify(full_site_status)
 
 @main_bp.route('/api/sites_status')
 def api_sites_status():
-    return jsonify(full_site_status)
+    sites = Site.query.all() # goes to Site in db.models and queries everything, 
+    data = {    #creates list: data as following, while pulling from Site in db.models.
+        str(site.id): {
+            "name": site.name,
+            "lat": site.latitude,
+            "lon": site.longitude,
+            "status": site.status
+        }
+        for site in sites
+    }
+    return jsonify(data)

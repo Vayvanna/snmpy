@@ -31,7 +31,11 @@ def ping_site(ip):
         return "up"
     except subprocess.CalledProcessError:
         return "down"
+    
+
 full_site_status={}
+
+
 def poll_sites():
     while True:
         for site in sites_data["sites"]:
