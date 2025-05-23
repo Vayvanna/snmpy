@@ -1,10 +1,42 @@
 # this is the part that listens to Http requests.
 
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, render_template, request
 from db.models import Site, SiteLogs  # SQLAlchemy model representing the 'sites' table in PostgreSQL
 from app.extensions import db
+from utils.auth import login_required
 main_bp = Blueprint('main', __name__)# creates blueprint object called main_bp
+
+
+
+
+from flask import render_template, request, redirect, session, url_for, flash
+
+@main_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        u = request.form.get('username')
+        p = request.form.get('password')
+        if (
+            u == current_app.config['LOGIN_USERNAME'] and
+            p == current_app.config['LOGIN_PASSWORD']
+        ):
+            session['logged_in'] = True
+            flash("Logged in successfully!", "success")
+            next_page = request.args.get('next') or url_for('main.index')
+            return redirect(next_page)
+        else:
+            flash("Invalid credentials", "error")
+    return render_template('login.html')
+
+@main_bp.route('/logout')
+def logout():
+    session.clear()
+    flash("You’ve been logged out.")
+    return redirect(url_for('main.login'))
+
+
+
 
 @main_bp.route('/')
 def index():
@@ -99,6 +131,7 @@ def api_logs_summary():
 
 
 @main_bp.route('/logs')
+@login_required
 def logsphere():
     return render_template('logs.html')
 
@@ -126,6 +159,9 @@ def api_logs():
         }
         for log in logs
     ])
+
+
+
 
 
 
