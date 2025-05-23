@@ -47,13 +47,25 @@ body {
 }
 .charts-section {
     background: #1a1a1a;
-    padding: 2rem;
+    padding: 1rem;
     border-radius: 1rem;
     box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    width: 72%;
+    margin: auto;
+
+    display: flex;             /* ➕ make children horizontal */
+    gap: 2rem;                 /* spacing between the two boxes */
+    justify-content: space-around; /* optional: adds spacing around */
+    flex-wrap: wrap;          /* fallback for small screens */
 }
+
+
+
 .chart-box {
+    flex: 1 1 45%;  /* allow each box to take ~45% */
     margin-bottom: 2rem;
 }
+
 .chart-box h3 {
     color: #42a5f5;
     margin-bottom: 1rem;

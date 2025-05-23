@@ -73,26 +73,54 @@
 
         <div class="card">
             <i class="fa-solid fa-server"></i>
-            <h3>{{ stats.sites }} Sites</h3>
+            <h3 class="stats sites">Sites: {{ stats.sites }}</h3>
         </div>
         <div class="card">
             <i class="fa-solid fa-check-circle" style="color: green;"></i>
-            <h3>{{ stats.sites_up }} Online</h3>
+            <h3 class="stats up">Sites Up: {{ stats.sites_up }}</h3>
         </div>
         <div class="card">
             <i class="fa-solid fa-times-circle" style="color: red;"></i>
-            <h3>{{ stats.sites_down }} Offline</h3>
+            <h3 class="stats down">Sites Down: {{ stats.sites_down }}</h3>
         </div>
+
 
         <div>
             <a href="/map" class="btn"><i class="fa-solid fa-map-location-dot"></i> View Map</a>
             <a href="/charts" class="btn"><i class="fa-solid fa-chart-column"></i> Logs & Charts</a>
             <a href="/admin" class="btn"><i class="fa-solid fa-tools"></i> Admin Panel</a>
+            <a href="/logs" class="btn"><i class="fa-solid fa-tools"></i> Logs Panel</a>
         </div>
 
         <div class="footer">
             SNMPy Monitoring © 2025
         </div>
     </div>
+
+
+
+
+    <script>
+
+        async function refreshHomepageStats() {
+            try {
+            const res = await fetch('/api/stats');
+            const data = await res.json();
+
+            document.querySelector('.stats.sites').textContent = `Sites: ${data.sites}`;
+            document.querySelector('.stats.up').textContent = `Sites Up: ${data.sites_up}`;
+            document.querySelector('.stats.down').textContent = `Sites Down: ${data.sites_down}`;
+            } catch (err) {
+            console.error("Failed to update stats:", err);
+            }
+        }
+
+        
+        refreshHomepageStats(); // call once immediately
+        setInterval(refreshHomepageStats, 15000); // then every 15s
+    </script>
+
+
+
 </body>
 </html>
