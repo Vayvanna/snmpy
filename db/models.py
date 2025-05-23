@@ -20,5 +20,5 @@ class Site(db.Model):
     snmp_community = db.Column(db.String(50))
     status = db.Column(db.String(10))  # optional, or compute live
 
-# class logs(db.Model):
-#     __talbename__ ='logs'
+# class Logs(db.Model):
+#     __talbename__ ='Logs'
