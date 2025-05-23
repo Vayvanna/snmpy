@@ -1,0 +1,78 @@
+/* Global Theme */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
+    overflow-x: hidden;
+}
+.dashboard-container {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.widget-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+.widget {
+    background-color: #1e1e1e;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    min-width: 200px;
+    flex: 1;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease;
+}
+.widget:hover {
+    transform: scale(1.05);
+}
+.widget h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #f39c12;
+}
+.widget .value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #00e676;
+}
+.charts-section {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+.chart-box {
+    margin-bottom: 2rem;
+}
+.chart-box h3 {
+    color: #42a5f5;
+    margin-bottom: 1rem;
+}
+.main-nav {
+    margin-top: 1rem;
+}
+
+.main-nav a {
+    margin: 0 1rem;
+    color: #42a5f5;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.2rem;
+    transition: border-color 0.2s ease;
+}
+
+.main-nav a:hover {
+    border-color: #42a5f5;
+}

@@ -1,87 +1,56 @@
-<!-- app/templates/charts.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Network Log Viewer & Analytics</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      background: #f0f2f5;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 2rem;
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 2rem;
-      background: white;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 0.75rem;
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>SNMPy - Logs & Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/charts.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>📊 Network Analytics & Log Viewer</h1>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+          <h1>SNMPy Network Analytics</h1>
+          <nav class="main-nav">
+            <a href="/" class="nav-link">🏠 Home</a>
+            <a href="/map" class="nav-link">🗺 Map</a>
+            <a href="/charts" class="nav-link">📊 Charts</a>
+            <a href="/admin" class="nav-link">⚙️ Admin</a>
+          </nav>
+        </header>
 
-    <canvas id="statusChart" height="80"></canvas>
 
-    <h2>🕵🏻 Site Logs (Last 500)</h2>
-    <table>
-      <tr>
-        <th>Timestamp</th>
-        <th>Site</th>
-        <th>Status</th>
-      </tr>
-      {% for log in logs %}
-      <tr>
-        <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-        <td>{{ log.site.name }}</td>
-        <td style="color: {% if log.status == 'up' %}green{% else %}red{% endif %};">{{ log.status }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+        <section class="widget-grid">
+            <div class="widget">
+                <h2>Total Sites</h2>
+                <div class="value" id="totalSites">—</div>
+            </div>
+            <div class="widget">
+                <h2>Sites Up</h2>
+                <div class="value" id="sitesUp">—</div>
+            </div>
+            <div class="widget">
+                <h2>Sites Down</h2>
+                <div class="value" id="sitesDown">—</div>
+            </div>
+        </section>
 
-  <script>
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    fetch('/api/sites_status')
-      .then(res => res.json())
-      .then(data => {
-        const labels = Object.values(data).map(s => s.name);
-        const values = Object.values(data).map(s => s.status === 'up' ? 1 : 0);
+        <section class="charts-section">
+            <div class="chart-box">
+                <h3>Site Uptime Distribution</h3>
+                <canvas id="statusPieChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3>Log Frequency (Hourly)</h3>
+                <canvas id="logBarChart"></canvas>
+            </div>
+        </section>
 
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Site Status (1 = up, 0 = down)',
-              data: values,
-              backgroundColor: values.map(v => v === 1 ? 'green' : 'red'),
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: { beginAtZero: true, max: 1 }
-            }
-          }
-        });
-      });
-  </script>
+        <footer>
+            <p>© SNMPy NMS Dashboard — Network Analytics</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
 </body>
 </html>
+

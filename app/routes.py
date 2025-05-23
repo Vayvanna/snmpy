@@ -67,6 +67,37 @@ def charts():
 
 
 
+from flask import jsonify
+from sqlalchemy import func
+from db.models import Site, SiteLogs
+from app.extensions import db
+from app.routes import main_bp
+
+@main_bp.route('/api/stats')
+def api_stats():
+    total_sites = Site.query.count()
+    up_sites = Site.query.filter_by(status='up').count()
+    down_sites = total_sites - up_sites
+    return jsonify({
+        'sites': total_sites,
+        'sites_up': up_sites,
+        'sites_down': down_sites
+    })
+
+@main_bp.route('/api/logs_summary')
+def api_logs_summary():
+    results = (
+        db.session.query(func.extract('hour', SiteLogs.timestamp).label('hour'), func.count())
+        .group_by('hour')
+        .order_by('hour')
+        .all()
+    )
+    hours = [f"{int(row[0]):02d}" for row in results]
+    counts = [row[1] for row in results]
+    return jsonify({'hours': hours, 'counts': counts})
+
+
+
 
 
 
