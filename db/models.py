@@ -7,7 +7,7 @@
 # basically here, this models.py is the translator of the ORM(object relational M smth) which is SQLAlchemy cuz raw sql is annoying.
 
 # the stuff is creating two tables.
-from app import db
+from app.extensions import db
 
 class Site(db.Model):
     __tablename__ = 'sites'
