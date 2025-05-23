@@ -1,8 +1,10 @@
+# this is the part that listens to Http requests.
+
 
 from flask import Blueprint, jsonify, render_template
 from db.models import Site  # SQLAlchemy model representing the 'sites' table in PostgreSQL
 from app.extensions import db
-main_bp = Blueprint('main', __name__)
+main_bp = Blueprint('main', __name__)# creates blueprint object called main_bp
 
 @main_bp.route('/')
 def index():
@@ -20,7 +22,7 @@ def index():
     }
     return render_template('index.html', stats=stats)
 
-@main_bp.route('/map')
+@main_bp.route('/map')#default to listenings to GET requests.
 def map():
     # Pull all site records from DB
     sites = Site.query.all()
