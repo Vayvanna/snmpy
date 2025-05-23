@@ -2,7 +2,7 @@
 
 
 from flask import Blueprint, jsonify, render_template
-from db.models import Site  # SQLAlchemy model representing the 'sites' table in PostgreSQL
+from db.models import Site, SiteLogs  # SQLAlchemy model representing the 'sites' table in PostgreSQL
 from app.extensions import db
 main_bp = Blueprint('main', __name__)# creates blueprint object called main_bp
 
@@ -56,6 +56,11 @@ def api_sites_status():
 # All dynamic status and info is now pulled from PostgreSQL via SQLAlchemy
 
 
+
+@main_bp.route('/charts')
+def charts():
+    logs = SiteLogs.query.order_by(SiteLogs.timestamp.desc()).limit(500).all()
+    return render_template('charts.html', logs=logs)
 
 
 
