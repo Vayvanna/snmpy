@@ -1,7 +1,12 @@
-// Make sure to include this script at the bottom of your HTML:
 document.addEventListener('DOMContentLoaded', function () {
     fetchStats();
     fetchLogAnalytics();
+
+    // 🔁 Repeat updates every 15 seconds
+    setInterval(() => {
+        fetchStats();
+        fetchLogAnalytics();
+    }, 15000);
 });
 
 // Fetch site stats (total, up, down) and update widgets
@@ -12,6 +17,7 @@ function fetchStats() {
             document.getElementById('totalSites').textContent = data.sites;
             document.getElementById('sitesUp').textContent = data.sites_up;
             document.getElementById('sitesDown').textContent = data.sites_down;
+
             renderPieChart(data.sites_up, data.sites_down);
         });
 }
@@ -26,9 +32,13 @@ function fetchLogAnalytics() {
 }
 
 // Pie Chart for Site Status
+let pieChart;
 function renderPieChart(up, down) {
     const ctx = document.getElementById('statusPieChart').getContext('2d');
-    new Chart(ctx, {
+
+    if (pieChart) pieChart.destroy(); // destroy previous chart before redrawing
+
+    pieChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: ['Up', 'Down'],
@@ -50,9 +60,13 @@ function renderPieChart(up, down) {
 }
 
 // Bar Chart for Log Volume by Hour
+let barChart;
 function renderLogFrequencyBarChart(labels, data) {
     const ctx = document.getElementById('logBarChart').getContext('2d');
-    new Chart(ctx, {
+
+    if (barChart) barChart.destroy(); // destroy previous chart before redrawing
+
+    barChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,

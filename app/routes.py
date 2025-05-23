@@ -1,7 +1,7 @@
 # this is the part that listens to Http requests.
 
 
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, request
 from db.models import Site, SiteLogs  # SQLAlchemy model representing the 'sites' table in PostgreSQL
 from app.extensions import db
 main_bp = Blueprint('main', __name__)# creates blueprint object called main_bp
@@ -98,16 +98,34 @@ def api_logs_summary():
 
 
 
+@main_bp.route('/logs')
+def logsphere():
+    return render_template('logs.html')
+
+@main_bp.route('/api/logs')
+def api_logs():
+    site_name= request.args.get('site')
+    status = request.args.get('status')
+
+    query=db.session.query(SiteLogs).join(Site)
+
+    if site_name:
+        query = query.filter(Site.name.ilike(f'%{site_name}%'))
+
+    if status:
+        query = query.filter(SiteLogs.status == status.lower())
 
 
-
-
-
-
-
-
-
-
+    logs = query.order_by(SiteLogs.timestamp.desc()).limit(200).all()
+ 
+    return jsonify([
+        {
+            "timestamp": log.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            "site": log.site.name,
+            "status": log.status
+        }
+        for log in logs
+    ])
 
 
 
