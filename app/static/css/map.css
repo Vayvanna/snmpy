@@ -1,0 +1,172 @@
+/* map.css */
+
+/* Basic body style */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #1e1e2f;
+    color: #f0f0f0;
+}
+
+.wrapper {
+    max-width: 1200px;
+    margin: auto;
+    padding: 1rem;
+}
+
+
+/* Centered container */
+.container {
+    text-align: center;
+    background-color: #2c2f4a;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* Logo style */
+.logo {
+    margin-top: 20px;
+    width: 120px;
+}
+
+/* Button */
+.btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 25px;
+    background-color: #007acc;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #005f99;
+}
+
+/* Statistics styling */
+.stats {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+
+.main-nav {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.main-nav a {
+    margin: 0 1rem;
+    color: #42a5f5;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.2rem;
+    transition: border-color 0.2s ease;
+}
+
+.main-nav a:hover {
+    border-color: #42a5f5;
+}
+
+
+
+/* Global Theme */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
+    overflow-x: hidden;
+}
+.dashboard-container {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.widget-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+.widget {
+    background-color: #1e1e1e;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    min-width: 200px;
+    flex: 1;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease;
+}
+.widget:hover {
+    transform: scale(1.05);
+}
+.widget h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #f39c12;
+}
+.widget .value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #00e676;
+}
+.charts-section {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+.chart-box {
+    margin-bottom: 2rem;
+}
+.chart-box h3 {
+    color: #42a5f5;
+    margin-bottom: 1rem;
+}
+.main-nav {
+    margin-top: 1rem;
+}
+
+.main-nav a {
+    margin: 0 1rem;
+    color: #42a5f5;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.2rem;
+    transition: border-color 0.2s ease;
+}
+
+.main-nav a:hover {
+    border-color: #42a5f5;
+}

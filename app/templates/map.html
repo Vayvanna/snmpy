@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- using the stlyes.css too -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+
   <style>
     #map { height: 90vh; width: 100%; }
     body { margin: 0; font-family: sans-serif; }
@@ -13,7 +16,19 @@
   </style>
 </head>
 <body>
-  <h2>Map of Sites</h2>
+  <div class="wrapper">
+    <header class="dashboard-header">
+      <h1>SNMPy Network Monitoring - Map of Sites</h1>
+      <nav class="main-nav">
+        <a href="/" class="nav-link">🏠 Home</a>
+        <a href="/map" class="nav-link">🗺 Map</a>
+        <a href="/charts" class="nav-link">📊 Charts</a>
+        <a href="/admin" class="nav-link">⚙️ Admin</a>
+      </nav>
+    </header>
+
+  </div>
+
   <div id="map"></div>
 
   <!-- Leaflet JS -->

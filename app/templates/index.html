@@ -1,32 +1,98 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SNMPy - Home</title>
-    <!-- Link to external CSS -->
+    <title>SNMPy - Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+            color: #333;
+        }
+
+        .card {
+            display: inline-block;
+            width: 220px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card i {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>SNMPy Network Monitoring</h1>
-        <p class="stats">Sites: {{ stats.sites }}</p>
-        <p class="stats">Sites Up: {{ stats.sites_up }}</p>
-        <p class="stats">Sites Down: {{ stats.sites_down }}</p>
+        <h1><i class="fa-solid fa-network-wired"></i> SNMPy Dashboard</h1>
 
-        <!-- Image (Optional logo) -->
-        <!-- <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SNMPy Logo" class="logo"> -->
+        <div class="card">
+            <i class="fa-solid fa-server"></i>
+            <h3>{{ stats.sites }} Sites</h3>
+        </div>
+        <div class="card">
+            <i class="fa-solid fa-check-circle" style="color: green;"></i>
+            <h3>{{ stats.sites_up }} Online</h3>
+        </div>
+        <div class="card">
+            <i class="fa-solid fa-times-circle" style="color: red;"></i>
+            <h3>{{ stats.sites_down }} Offline</h3>
+        </div>
 
-        <!-- Button to go to map page -->
-        <a href="/map" class="btn">View Map</a>
-        <p></p>
-        <a href="/charts" class=btn>View Logs & Charts</a>
-        <p></p>
-        <a href="/admin" class=btn>View Admin Panel</a>
+        <div>
+            <a href="/map" class="btn"><i class="fa-solid fa-map-location-dot"></i> View Map</a>
+            <a href="/charts" class="btn"><i class="fa-solid fa-chart-column"></i> Logs & Charts</a>
+            <a href="/admin" class="btn"><i class="fa-solid fa-tools"></i> Admin Panel</a>
+        </div>
 
+        <div class="footer">
+            SNMPy Monitoring © 2025
+        </div>
     </div>
-
-    <!-- Optional JavaScript -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
