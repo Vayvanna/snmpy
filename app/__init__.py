@@ -5,8 +5,8 @@ from app.routes import main_bp ##  importing the main: the mini-app blueprint ob
 
 from flask_sqlalchemy import SQLAlchemy # importing sqlalchemy.
 from config import Config # importing config.py at root level.
-
-db = SQLAlchemy() 
+from app.extensions import db  # ✅ Now cleanly imports db
+# db = SQLAlchemy() 
 
 def create_app():  ## this function is to configure the Flask app.
     app = Flask(__name__) ## instance of app Flask
@@ -22,7 +22,7 @@ def create_app():  ## this function is to configure the Flask app.
     
     with app.app_context():
         from core.poller import start_background_thread
-        start_background_thread()
+        start_background_thread(app)
 
     return app
     
