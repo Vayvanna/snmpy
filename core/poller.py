@@ -5,6 +5,8 @@ from flask import current_app
 from db.models import Site,SiteLogs # Import your SQLAlchemy model and session object
 from app.extensions import db
 import datetime
+from utils.telegram_alert import send_alert
+
 def ping_site(ip):
     """Pings a site using ICMP."""
     try:
@@ -20,16 +22,28 @@ def poll_sites(app):
             sites = Site.query.all()  # Get all sites from the DB
 
             for site in sites:
-                result = ping_site(site.ip_address)
-                site.status = result  # Update the site row
+                # result = ping_site(site.ip_address)
+                # site.status = result  # Update the site row
 
-                # ✅ Create new log entry
-                log = SiteLogs(
-                    site_id=site.id,
-                    status=result  # or leave out if model default is set
-                )
+                # # ✅ Create new log entry
+                # log = SiteLogs(
+                #     site_id=site.id,
+                #     status=result  # or leave out if model default is set
+                # )
+                # db.session.add(log)
+                old_status = site.status
+                result = ping_site(site.ip_address)
+                new_status = result
+
+                if old_status != new_status:
+                    msg = f"🚨 Site *{site.name}* changed status: {old_status.upper()} → {new_status.upper()}"
+                    send_alert(msg, site_id=site.id)
+
+                site.status = result  # Now update
+                log = SiteLogs(site_id=site.id, status=result)
                 db.session.add(log)
-                # print(f"[LOG] {site.name} is {result} — log inserted")
+
+
 
 
             db.session.commit()  # Save both status update + logs

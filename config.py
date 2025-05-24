@@ -18,3 +18,8 @@ class Config:
     LOGIN_USERNAME = 'admin'
     LOGIN_PASSWORD = 'secret'
     SECRET_KEY = 'supersecretkey'  # Flask session secret
+
+
+
+    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
