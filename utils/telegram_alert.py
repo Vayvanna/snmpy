@@ -18,15 +18,18 @@ def send_alert(message, site_id=None, cooldown=300):
 
     token = current_app.config.get("TELEGRAM_BOT_TOKEN")
     chat_id = current_app.config.get("TELEGRAM_CHAT_ID")
+    chat_id2 = current_app.config.get("TELEGRAM_CHAT_ID")
 
     if not token or not chat_id:
         print("❌ Telegram not configured")
         return
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}
+    payload = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"} # had to change this as asterics* don't get sent well.
+    payload2 = {"chat_id": chat_id2, "text": message, "parse_mode": "Markdown"} # had to change this as asterics* don't get sent well.
     try:
         requests.post(url, json=payload)
+        # requests.post(url, json=payload2)
         print(f"✅ Alert sent: {message}")
     except Exception as e:
         print(f"❌ Failed to send alert: {e}")
