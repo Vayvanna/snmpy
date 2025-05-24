@@ -6,6 +6,21 @@ from db.models import Site,SiteLogs # Import your SQLAlchemy model and session o
 from app.extensions import db
 import datetime
 from utils.telegram_alert import send_alert
+import json
+from datetime import datetime
+from core.helpersofsn import snmp_get
+from db.models import SNMPMetricLog, SNMPCurrent  # if not already
+import threading
+import time
+import subprocess
+import json
+from datetime import datetime
+
+from flask import current_app
+from app.extensions import db
+from db.models import Site, SiteLogs, SNMPMetricLog, SNMPCurrent
+from core.helpersofsn import snmp_get
+from utils.telegram_alert import send_alert
 
 def ping_site(ip):
     """Pings a site using ICMP."""
@@ -43,6 +58,44 @@ def poll_sites(app):
                 log = SiteLogs(site_id=site.id, status=result)
                 db.session.add(log)
 
+                # 4. SNMP POLLING (only if site is up)
+                # 4. SNMP POLLING (only if site is up)w
+
+                with open('config/snmp_oids.json')as f:
+                    SNMP_OIDS= json.load(f)
+
+                    
+                    if new_status == "up":
+                        for entry in SNMP_OIDS:
+                            label = entry["label"]
+                            oid = entry["oid"]
+                            value = snmp_get(site.ip_address, site.snmp_community, oid)
+
+                            if value is None:
+                                continue  # skip unreachable SNMP
+
+                            # Log into SNMPMetricLog
+                            db.session.add(SNMPMetricLog(
+                                site_id=site.id,
+                                timestamp=datetime.utcnow(),
+                                oid=oid,
+                                label=label,
+                                value=value
+                            ))
+
+                            # Upsert into SNMPCurrent
+                            current = SNMPCurrent.query.filter_by(site_id=site.id, label=label).first()
+                            if current:
+                                current.value = value
+                                current.oid = oid
+                                current.last_updated = datetime.utcnow()
+                            else:
+                                db.session.add(SNMPCurrent(
+                                    site_id=site.id,
+                                    label=label,
+                                    oid=oid,
+                                    value=value
+                                ))
 
 
 

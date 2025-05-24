@@ -47,3 +47,30 @@ class SiteLogs(db.Model):
     status = db.Column(db.String(10))
 
     site = db.relationship('Site', backref='logs')
+
+
+
+class SNMPMetricLog(db.Model):
+    __tablename__ = 'snmp_metric_log'
+
+    id = db.Column(db.Integer, primary_key=True)
+    site_id = db.Column(db.Integer, db.ForeignKey("sites.id"), nullable=False)
+    timestamp = db.Column(db.DateTime, default=default_time, index=True)
+
+    oid = db.Column(db.String(128), nullable=False)        # Full OID
+    label = db.Column(db.String(64), nullable=False)       # e.g. sysUpTime, ifDescr.1
+    value = db.Column(db.String(256), nullable=False)      # Always stored as string
+
+    site = db.relationship("Site", backref="snmp_logs")
+
+
+class SNMPCurrent(db.Model):
+    __tablename__ = 'snmp_current'
+
+    site_id = db.Column(db.Integer, db.ForeignKey("sites.id"), primary_key=True)
+    label = db.Column(db.String(64), primary_key=True)     # Composite key with site_id
+    oid = db.Column(db.String(128), nullable=False)        # Full OID
+    value = db.Column(db.String(256), nullable=False)
+    last_updated = db.Column(db.DateTime, default=default_time)
+
+    site = db.relationship("Site", backref="snmp_current")
