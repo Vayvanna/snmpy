@@ -12,6 +12,7 @@ from app.admin import init_admin  #####importing the init_admin function that at
 
 def create_app():  ## this function is to configure the Flask app.
     app = Flask(__name__) ## instance of app Flask
+    # app = Flask(__name__, template_folder='app/templates') ## instance of app Flask
 
     app.config.from_object(Config) # 
     db.init_app(app) ## binding db to the app. This connects your Flask app to the database via SQLAlchemy

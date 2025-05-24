@@ -14,6 +14,7 @@ from flask import render_template, request, redirect, session, url_for, flash
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    session.permanent = True
     if request.method == 'POST':
         u = request.form.get('username')
         p = request.form.get('password')
@@ -36,6 +37,10 @@ def logout():
     return redirect(url_for('main.login'))
 
 
+# @main_bp.after_request
+# def expire_session(response):
+#     session.pop('logged_in', None)
+#     return response
 
 
 @main_bp.route('/')
