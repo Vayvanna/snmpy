@@ -37,7 +37,7 @@ def poll_sites(app):
 
                 if old_status != new_status:
                     msg = f"🚨 Site {site.name} changed status: {old_status.upper()} → {new_status.upper()}"
-                    send_alert(msg, site_id=site.id)
+                    send_alert(msg, site_id=site.id, status=new_status)
 
                 site.status = result  # Now update
                 log = SiteLogs(site_id=site.id, status=result)
