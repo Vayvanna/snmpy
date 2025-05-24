@@ -6,11 +6,16 @@ from flask import current_app
 # Optional: avoid spamming
 last_sent = {}
 
-def send_alert(message, site_id=None, cooldown=300):
+def send_alert(message, site_id=None,status=None, cooldown=300):
     """Send a Telegram message if cooldown passed."""
     import time
     now = time.time()
+    key = (site_id, status)
+    if key in last_sent and now - last_sent[key] < cooldown:
+        return  # Skip duplicate alert for that status
 
+    last_sent[key] = now
+    
     if site_id:
         if site_id in last_sent and now - last_sent[site_id] < cooldown:
             return  # Skip duplicate alert
