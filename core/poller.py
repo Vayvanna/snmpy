@@ -36,7 +36,7 @@ def poll_sites(app):
                 new_status = result
 
                 if old_status != new_status:
-                    msg = f"🚨 Site *{site.name}* changed status: {old_status.upper()} → {new_status.upper()}"
+                    msg = f"🚨 Site {site.name} changed status: {old_status.upper()} → {new_status.upper()}"
                     send_alert(msg, site_id=site.id)
 
                 site.status = result  # Now update
