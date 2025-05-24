@@ -45,7 +45,13 @@ class SiteLogsAdmin(ModelView):
         return redirect(url_for("main.login", next=request.path))
 
 # Admin object (no app passed yet)
-admin = Admin(name='SNMPy Admin', template_mode='bootstrap3', index_view=MyAdminIndexView(), base_template='admin/custom_master.html' )
+# admin = Admin(name='SNMPy Admin', template_mode='bootstrap3', index_view=MyAdminIndexView(), base_template='admin/custom_master.html')
+admin = Admin(
+    name='SNMPy Admin',
+    template_mode='bootstrap3',
+    index_view=MyAdminIndexView()
+    # base_template='admin/custom_master.html'  # ✅ just the relative path
+)
 
 # Hook called from app factory
 def init_admin(app):
@@ -63,3 +69,8 @@ def init_admin(app):
 #     Registers the Site model
 
 #     Connects it to your db.session (PostgreSQL)
+
+# note for tmrw:
+# So basically, tomorrow I'm gonna try to fix this issue about the... I think I added a way to get to the index from the admin, and that fucked up, so hopefully tomorrow I fix that. And then move on to do other things.
+
+# u can try to remove what u added, those links in admin.py or its <admin=..> definition.
