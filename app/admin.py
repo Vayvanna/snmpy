@@ -11,7 +11,7 @@ class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
         if current_app.config.get("USE_AUTH") and not session.get("logged_in"):
-            flash("You must be logged in to access the admin panel.", "error")
+            # flash("You must be logged in to access the admin panel.", "error")
             return redirect(url_for('main.login', next=request.url))
         return super().index()
 
