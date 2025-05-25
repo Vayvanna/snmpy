@@ -6,10 +6,10 @@ from flask import app
 class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://nms_user:vayvanna@localhost/nms_db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    PERMANENT_SESSION_LIFETIME = timedelta(seconds=5)
+    PERMANENT_SESSION_LIFETIME = timedelta(seconds=5) 
 
 
-# This file just holds your connection URL (and maybe other settings):
+# This file just holds the connection URL (and maybe other settings):
 
 
 

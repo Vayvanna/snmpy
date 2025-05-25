@@ -16,15 +16,33 @@ def sync_sites_from_json():
 
     added = 0
     skipped = 0
+    modified = 0
 
     for s in data["sites"]:
-        existing = Site.query.get(int(s["id"]))
-        if existing:
-            skipped += 1
-            continue  # Don't overwrite, just skip
+        site_id = int(s["id"])
+        existing = Site.query.get(site_id)
 
+        if existing:
+            # check if any field changed
+            if (
+                existing.name == s["name"] and
+                existing.ip_address == s["ip"] and
+                existing.latitude == s["lat"] and
+                existing.longitude == s["lon"]
+            ):
+                skipped += 1
+                continue
+            # apply changes
+            existing.name = s["name"]
+            existing.ip_address = s["ip"]
+            existing.latitude = s["lat"]
+            existing.longitude = s["lon"]
+            modified += 1
+            continue
+
+        # if not exists, create new site
         site = Site(
-            id=int(s["id"]),
+            id=site_id,
             name=s["name"],
             ip_address=s["ip"],
             latitude=s["lat"],
@@ -37,4 +55,4 @@ def sync_sites_from_json():
         added += 1
 
     db.session.commit()
-    print(f"✅ Synced sites.json: {added} new, {skipped} skipped")
+    print(f"✅ Synced sites.json: {added} new, {skipped} skipped, {modified} modified")
