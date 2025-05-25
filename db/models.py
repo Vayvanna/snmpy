@@ -24,7 +24,7 @@ class Site(db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     location = db.Column(db.String(100))
-    snmp_community = db.Column(db.String(50))
+    snmp_community = db.Column(db.String(50), default="public")
     status = db.Column(db.String(10))  # compute live
 
     def __repr__(self):
