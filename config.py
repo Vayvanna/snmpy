@@ -15,9 +15,13 @@ class Config:
 
     # Add your custom settings here
     USE_AUTH = True
-    LOGIN_USERNAME = 'admin'
-    LOGIN_PASSWORD = 'secret'
-    SECRET_KEY = 'supersecretkey'  # Flask session secret
+    
+    # LOGIN_USERNAME = 'admin'
+    LOGIN_USERNAME= os.getenv("LOGIN_USERNAME")
+    # LOGIN_PASSWORD = 'secret'
+    LOGIN_PASSWORD= os.getenv("LOGIN_PASSWORD")
+    # SECRET_KEY = 'supersecretkey'  # Flask session secret
+    SECRET_KEY = os.getenv("SECRET_KEY")  # Flask session secret
 
 
 

@@ -61,20 +61,21 @@ def poll_sites(app):
                 # 4. SNMP POLLING (only if site is up)
                 # 4. SNMP POLLING (only if site is up)w
 
-                with open('config/snmp_oids.json')as f:
+                with open('config/snmp_oids.json')as f: # open the oids json on config/snmp_oids.json
                     SNMP_OIDS= json.load(f)
 
                     
-                    if new_status == "up":
-                        for entry in SNMP_OIDS:
-                            label = entry["label"]
-                            oid = entry["oid"]
-                            value = snmp_get(site.ip_address, site.snmp_community, oid)
+                    if new_status == "up": # if the newstatus=)current one is up, try the following:
+                        for entry in SNMP_OIDS: #for each oid in json
+                            label = entry["label"]#label gets its new label
+                            oid = entry["oid"] # oid gets its new oid
+                            value = snmp_get(site.ip_address, site.snmp_community, oid)# value of this oid is sent using snmp_get from helpersofsn.py
 
-                            if value is None:
+                            if value is None:# if no value, continue act as its unreachable., so SKIP to next entry.
+                                print ("⚪⚪⚪ the value is none, so uncreachable, snmpy/core/poller.py")
                                 continue  # skip unreachable SNMP
 
-                            # Log into SNMPMetricLog
+                            # Log into SNMPMetricLog    #if value is actually not None, then log it as metric then down below update the LIVE table.
                             db.session.add(SNMPMetricLog(
                                 site_id=site.id,
                                 timestamp=datetime.utcnow(),
@@ -85,11 +86,13 @@ def poll_sites(app):
 
                             # Upsert into SNMPCurrent
                             current = SNMPCurrent.query.filter_by(site_id=site.id, label=label).first()
-                            if current:
-                                current.value = value
-                                current.oid = oid
-                                current.last_updated = datetime.utcnow()
-                            else:
+                            if current: # if current we got is there, exists.
+                                print ("⚪⚪⚪ the current value exists already, snmpy/core/poller.py")
+                                current.value = value # update its value
+                                current.oid = oid # update its oid
+                                # current.last_updated = datetime.utcnow()
+                            else: # if it doesn't exist, then create it & update it.
+                                print ("⚪⚪⚪ the current value doesn't exist, gonna create it, snmpy/core/poller.py")
                                 db.session.add(SNMPCurrent(
                                     site_id=site.id,
                                     label=label,

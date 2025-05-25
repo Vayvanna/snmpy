@@ -101,9 +101,6 @@ def charts():
 
 
 
-
-
-
 from flask import jsonify
 from sqlalchemy import func
 from db.models import Site, SiteLogs

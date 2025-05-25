@@ -1,5 +1,9 @@
 import os
 
+def should_skip(path):
+    base = os.path.basename(path)
+    return base.startswith(".git") or base.startswith("__pycache__")
+
 def main():
     current_dir = os.getcwd()
     parent_dir = os.path.dirname(current_dir)
@@ -9,17 +13,24 @@ def main():
         # First, write the folder hierarchy (like ls -R)
         output.write("== Folder Hierarchy (like ls -R) ==\n\n")
         for root, dirs, files in os.walk(current_dir):
-            output.write(f"{os.path.relpath(root, current_dir)}/\n")
+            # Modify dirs in-place to skip unwanted folders
+            dirs[:] = [d for d in dirs if not should_skip(d)]
+            rel_root = os.path.relpath(root, current_dir)
+            output.write(f"{rel_root}/\n")
             for d in dirs:
                 output.write(f"  {d}/\n")
             for f in files:
-                output.write(f"  {f}\n")
+                if not should_skip(f):
+                    output.write(f"  {f}\n")
             output.write("\n")
 
         # Then, write each file's full path and its content
         output.write("\n== File Contents ==\n\n")
-        for root, _, files in os.walk(current_dir):
+        for root, dirs, files in os.walk(current_dir):
+            dirs[:] = [d for d in dirs if not should_skip(d)]
             for file in files:
+                if should_skip(file):
+                    continue
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, current_dir)
                 output.write(f"\n--- {rel_path} ---\n")
