@@ -5,6 +5,8 @@ from flask_admin.contrib.sqla import ModelView
 from flask import session, redirect, url_for, request, flash, current_app
 from app.extensions import db
 from db.models import Site, SiteLogs
+from flask_admin.contrib.sqla import ModelView
+from db.models import SNMPCurrent, SNMPMetricLog, SNMPOID
 
 # Custom AdminIndexView
 class MyAdminIndexView(AdminIndexView):
@@ -58,6 +60,15 @@ def init_admin(app):
     admin.init_app(app)
     admin.add_view(SiteAdmin(Site, db.session))
     admin.add_view(SiteLogsAdmin(SiteLogs, db.session))
+
+    class SNMPModelView(ModelView):
+        column_hide_backrefs = False
+        column_display_pk = True
+        page_size = 50
+
+    admin.add_view(SNMPModelView(SNMPCurrent, db.session))
+    admin.add_view(SNMPModelView(SNMPMetricLog, db.session))
+    admin.add_view(SNMPModelView(SNMPOID, db.session))
 
 
 
