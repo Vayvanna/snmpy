@@ -1,30 +1,44 @@
-[
-  {
-    "label": "sysDescr",
-    "oid": "1.3.6.1.2.1.1.1.0"
-  },
-  {
-    "label": "sysObjectID",
-    "oid": "1.3.6.1.2.1.1.2.0"
-  },
-  {
-    "label": "sysUpTime",
-    "oid": "1.3.6.1.2.1.1.3.0"
-  },
-  {
-    "label": "sysContact",
-    "oid": "1.3.6.1.2.1.1.4.0"
-  },
-  {
-    "label": "sysName",
-    "oid": "1.3.6.1.2.1.1.5.0"
-  },
-  {
-    "label": "sysLocation",
-    "oid": "1.3.6.1.2.1.1.6.0"
-  },
-  {
-    "label": "ifNumber",
-    "oid": "1.3.6.1.2.1.2.1.0"
-  }
-]
+{
+  "1": [
+    { "label": "sysDescr", "oid": "1.3.6.1.2.1.1.1.0", "port": 1161 },
+    { "label": "sysName", "oid": "1.3.6.1.2.1.1.5.0", "port": 1161 },
+    { "label": "sysContact", "oid": "1.3.6.1.2.1.1.4.0", "port": 1161 },
+    { "label": "sysUpTime", "oid": "1.3.6.1.2.1.1.3.0", "port": 1161 },
+    { "label": "sysLocation", "oid": "1.3.6.1.2.1.1.6.0", "port": 1161 }
+  ],
+  "2": [
+    { "label": "ifDescr.1", "oid": "1.3.6.1.2.1.2.2.1.2.1", "port": 1161 },
+    { "label": "ifDescr.2", "oid": "1.3.6.1.2.1.2.2.1.2.2", "port": 1161 },
+    { "label": "ifOperStatus.1", "oid": "1.3.6.1.2.1.2.2.1.8.1", "port": 1161 },
+    { "label": "ifOperStatus.2", "oid": "1.3.6.1.2.1.2.2.1.8.2", "port": 1161 },
+    { "label": "sysDescr", "oid": "1.3.6.1.2.1.1.1.0", "port": 1161 }
+  ],
+  "3": [
+    { "label": "sysUpTime", "oid": "1.3.6.1.2.1.1.3.0", "port": 1161 },
+    { "label": "cpuLoad", "oid": "1.3.6.1.4.1.2021.10.1.3.1", "port": 1161 },
+    { "label": "totalRAM", "oid": "1.3.6.1.4.1.2021.4.5.0", "port": 1161 },
+    { "label": "usedRAM", "oid": "1.3.6.1.4.1.2021.4.6.0", "port": 1161 },
+    { "label": "diskUsed", "oid": "1.3.6.1.4.1.2021.9.1.9.1", "port": 1161 }
+  ],
+  "4": [
+    { "label": "sysContact", "oid": "1.3.6.1.2.1.1.4.0", "port": 1161 },
+    { "label": "sysLocation", "oid": "1.3.6.1.2.1.1.6.0", "port": 1161 },
+    { "label": "ifDescr.1", "oid": "1.3.6.1.2.1.2.2.1.2.1", "port": 1161 },
+    { "label": "inOctets.1", "oid": "1.3.6.1.2.1.2.2.1.10.1", "port": 1161 },
+    { "label": "outOctets.1", "oid": "1.3.6.1.2.1.2.2.1.16.1", "port": 1161 }
+  ],
+  "5": [
+    { "label": "sysDescr", "oid": "1.3.6.1.2.1.1.1.0", "port": 1161 },
+    { "label": "sysName", "oid": "1.3.6.1.2.1.1.5.0", "port": 1161 },
+    { "label": "ifDescr.1", "oid": "1.3.6.1.2.1.2.2.1.2.1", "port": 1161 },
+    { "label": "inOctets.1", "oid": "1.3.6.1.2.1.2.2.1.10.1", "port": 1161 },
+    { "label": "outOctets.1", "oid": "1.3.6.1.2.1.2.2.1.16.1", "port": 1161 }
+  ],
+  "6": [
+    { "label": "sysLocation", "oid": "1.3.6.1.2.1.1.6.0", "port": 1161 },
+    { "label": "sysUpTime", "oid": "1.3.6.1.2.1.1.3.0", "port": 1161 },
+    { "label": "sysDescr", "oid": "1.3.6.1.2.1.1.1.0", "port": 1161 },
+    { "label": "cpuLoad", "oid": "1.3.6.1.4.1.2021.10.1.3.1", "port": 1161 },
+    { "label": "processes", "oid": "1.3.6.1.4.1.2021.11.11.0", "port": 1161 }
+  ]
+}
