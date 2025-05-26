@@ -28,7 +28,8 @@ def sync_sites_from_json():
                 existing.name == s["name"] and
                 existing.ip_address == s["ip"] and
                 existing.latitude == s["lat"] and
-                existing.longitude == s["lon"]
+                existing.longitude == s["lon"] and
+                existing.snmp_community == s["snmp_community"]
             ):
                 skipped += 1
                 continue
@@ -37,6 +38,7 @@ def sync_sites_from_json():
             existing.ip_address = s["ip"]
             existing.latitude = s["lat"]
             existing.longitude = s["lon"]
+            existing.snmp_community = s["snmp_community"]
             modified += 1
             continue
 

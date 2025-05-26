@@ -74,3 +74,18 @@ class SNMPCurrent(db.Model):
     last_updated = db.Column(db.DateTime, default=default_time)
 
     site = db.relationship("Site", backref="snmp_current")
+
+
+class SNMPOID(db.Model):
+    __tablename__ = 'snmp_oids'
+
+    id = db.Column(db.Integer, primary_key=True)
+    site_id = db.Column(db.Integer, db.ForeignKey('sites.id'), nullable=False)
+    oid = db.Column(db.String(128), nullable=False)
+    label = db.Column(db.String(64), nullable=True)
+    port = db.Column(db.Integer, nullable=False, default=161)
+
+    site = db.relationship('Site', backref='snmp_oids')
+
+    def __repr__(self):
+        return f"<SNMPOID site_id={self.site_id} oid={self.oid} port={self.port}>"
