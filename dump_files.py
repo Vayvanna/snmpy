@@ -18,7 +18,7 @@ def main():
             rel_root = os.path.relpath(root, current_dir)
             output.write(f"{rel_root}/\n")
             for d in dirs:
-                output.write(f"  {d}/\n")
+                output.write(f"{d}/\n")
             for f in files:
                 if not should_skip(f):
                     output.write(f"  {f}\n")

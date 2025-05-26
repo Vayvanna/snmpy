@@ -65,9 +65,9 @@ def poll_sites(app):
 
                         if value is None:
                             # print("⚪⚪⚪ value is None, SNMP unreachable, skipping...")
-                            print("⚪ skipping...")
+                            print("⚪", end='', flush=True)
                             continue
-                        # print(f"[DEBUG] polled {site.name} | OID: {oid} | Result: {value}")
+                        # print(f"[DEBUG] polled {site.name} | OID: {oid} | Result: {value}"), end=' '
                         # Historical log
                         db.session.add(SNMPMetricLog(
                             site_id=site.id,
@@ -81,12 +81,12 @@ def poll_sites(app):
                         with db.session.no_autoflush:
                             current = SNMPCurrent.query.filter_by(site_id=site.id, label=label).first()
                             if current:
-                                print("🟢 updating...")
+                                print("🟢", end='', flush=True)
                                 current.value = value
                                 current.oid = oid
                                 current.last_updated = default_time()
                             else:
-                                print("🟣 creating..!")
+                                print("🟣", end='', flush=True)
                                 db.session.merge(SNMPCurrent(
                                     site_id=site.id,
                                     label=label,

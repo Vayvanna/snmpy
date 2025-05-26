@@ -28,10 +28,14 @@
         <a href="/logs" class="nav-link">🪵 Logs</a>
       </nav>
     </header>
-
   </div>
 
   <div id="map"></div>
+
+  <!-- Load SNMP data into JS -->
+  <script>
+    const snmps = {{ snmps | tojson }};
+  </script>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -43,77 +47,78 @@
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    const markers = {}; // store markers by ID
+    const markers = {};
+
+    function formatSNMPTable(snmpEntries) {
+      if (!snmpEntries || snmpEntries.length === 0) return "<i>No SNMP data</i>";
+      let table = '<table style="width:100%; font-size: 0.9rem;">';
+      for (const entry of snmpEntries) {
+        table += `<tr><td><b>${entry.label}</b></td><td>${entry.value}</td></tr>`;
+      }
+      table += '</table>';
+      return table;
+    }
 
     async function loadMarkers() {
-        try {
-            const response = await fetch("/api/sites_status");
-            const data = await response.json();
+      try {
+        const response = await fetch("/api/sites_status");
+        const data = await response.json();
 
-            console.log("Fetched site data:", data);
-            console.log("Number of sites fetched:", Object.keys(data).length);
+        for (const id in data) {
+          const site = data[id];
+          if (!site.lat || !site.lon) continue;
 
-            for (const id in data) {
-                const site = data[id];
+          const color = site.status?.toLowerCase() === "up" ? "green" : "red";
 
-                if (!site.lat || !site.lon) {
-                    console.warn(`⚠️ Skipping site ${id} (${site.name}) due to missing coordinates.`, site);
-                    continue;
-                }
+          const marker = L.circleMarker([site.lat, site.lon], {
+            radius: 8,
+            color,
+            fillColor: color,
+            fillOpacity: 0.9
+          }).addTo(map);
 
-                const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+          const snmpTable = formatSNMPTable(snmps[id]);
+          marker.bindPopup(`
+            <b>${site.name}</b><br>
+            Status: <span style="color:${color}; font-weight:bold">${site.status}</span><br>
+            ${snmpTable}
+          `);
 
-                const marker = L.circleMarker([site.lat, site.lon], {
-                    radius: 8,
-                    color: color,
-                    fillColor: color,
-                    fillOpacity: 0.9
-                })
-                .addTo(map)
-                .bindPopup(`<b>${site.name}</b><br>Status: ${site.status}`);
-
-                markers[id] = marker;
-
-                console.log(`✅ Added marker for ${site.name} (${site.status})`);
-            }
-        } catch (error) {
-            console.error("❌ Failed to load markers:", error);
+          markers[id] = marker;
         }
+      } catch (err) {
+        console.error("Failed to load markers:", err);
+      }
     }
-
-
 
     async function updateSiteStatuses() {
-        try {
-            const response = await fetch("/api/sites_status");
-            const data = await response.json();
+      try {
+        const res = await fetch("/api/sites_status");
+        const data = await res.json();
 
-            console.log("🔄 Updating site statuses");
+        for (const id in data) {
+          const site = data[id];
+          const color = site.status?.toLowerCase() === "up" ? "green" : "red";
 
-            for (const id in data) {
-                const site = data[id];
-                const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+          if (!markers[id]) continue;
 
-                if (!markers[id]) {
-                    console.warn(`⚠️ No existing marker found for site ID ${id} (${site.name})`);
-                    continue;
-                }
+          markers[id].setStyle({ color, fillColor: color });
 
-                markers[id].setStyle({ color: color, fillColor: color });
-                markers[id].setPopupContent(`<b>${site.name}</b><br>Status: ${site.status}`);
-
-                console.log(`✅ Updated marker for ${site.name}: ${site.status}`);
-            }
-        } catch (error) {
-            console.error("❌ Failed to update site statuses:", error);
+          const snmpTable = formatSNMPTable(snmps[id]);
+          markers[id].setPopupContent(`
+            <b>${site.name}</b><br>
+            Status: <span style="color:${color}; font-weight:bold">${site.status}</span><br>
+            ${snmpTable}
+          `);
         }
+      } catch (err) {
+        console.error("Error updating statuses:", err);
+      }
     }
 
-
-    // Initial load
     loadMarkers();
-    // Refresh status every 15s
     setInterval(updateSiteStatuses, 15000);
   </script>
 </body>
+
 </html>
