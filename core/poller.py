@@ -78,21 +78,22 @@ def poll_sites(app):
                         ))
 
                         # Live value
-                        current = SNMPCurrent.query.filter_by(site_id=site.id, label=label).first()
-                        if current:
-                            print("🟢 updating...")
-                            current.value = value
-                            current.oid = oid
-                            current.last_updated = default_time()
-                        else:
-                            print("🟣 creating..!")
-                            db.session.add(SNMPCurrent(
-                                site_id=site.id,
-                                label=label,
-                                oid=oid,
-                                value=value,
-                                last_updated=default_time()
-                            ))
+                        with db.session.no_autoflush:
+                            current = SNMPCurrent.query.filter_by(site_id=site.id, label=label).first()
+                            if current:
+                                print("🟢 updating...")
+                                current.value = value
+                                current.oid = oid
+                                current.last_updated = default_time()
+                            else:
+                                print("🟣 creating..!")
+                                db.session.merge(SNMPCurrent(
+                                    site_id=site.id,
+                                    label=label,
+                                    oid=oid,
+                                    value=value,
+                                    last_updated=default_time()
+                                ))
 
 
 

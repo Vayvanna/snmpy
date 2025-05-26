@@ -1,5 +1,5 @@
-1.3.6.1.2.1.2.2.1.2.1|4|Site2 ifDescr.1 Ethernet1/0
-1.3.6.1.2.1.2.2.1.2.2|4|Site2 ifDescr.2 Ethernet1/1
-1.3.6.1.2.1.2.2.1.8.1|2|Site2 ifOperStatus.1 up
-1.3.6.1.2.1.2.2.1.8.2|2|Site2 ifOperStatus.2 down
-1.3.6.1.2.1.1.1.0|4|Site2 sysDescr BranchSwitch
+1.3.6.1.2.1.2.2.1.2.1|4|Site2ifDescr.1Ethernet1/0
+1.3.6.1.2.1.2.2.1.2.2|4|Site2ifDescr.2Ethernet1/1
+1.3.6.1.2.1.2.2.1.8.1|2|23
+1.3.6.1.2.1.2.2.1.8.2|2|24
+1.3.6.1.2.1.1.1.0|4|Site2sysDescrBranchSwitch

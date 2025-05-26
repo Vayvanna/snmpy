@@ -2,7 +2,7 @@
 
 
 from flask import Blueprint, current_app, jsonify, render_template, request
-from db.models import Site, SiteLogs  # SQLAlchemy model representing the 'sites' table in PostgreSQL
+from db.models import Site, SiteLogs, SNMPMetricLog, SNMPCurrent, SNMPOID   # SQLAlchemy model representing the 'sites' table in PostgreSQL
 from app.extensions import db
 from utils.auth import login_required
 main_bp = Blueprint('main', __name__)# creates blueprint object called main_bp
@@ -161,3 +161,42 @@ def api_logs():
         }
         for log in logs
     ])
+
+@main_bp.route("/api/snmp_logs")
+def api_snmp_logs():
+    logs = SNMPMetricLog.query.order_by(SNMPMetricLog.timestamp.desc()).limit(50).all()
+    return jsonify({
+        "logs": [
+            {
+                "timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                "site_name": log.site.name,
+                "label": log.label,
+                "value": log.value
+            }
+            for log in logs
+        ]
+    })
+
+
+@main_bp.route('/snmp')
+@login_required
+def snmp_monitor():
+    sites = Site.query.all()
+    return render_template('snmp.html', sites=sites)
+
+@main_bp.route('/api/snmp_current')
+def api_snmp_current():
+    site_id = request.args.get('site_id')
+    query = SNMPCurrent.query.join(Site)
+    
+    if site_id:
+        query = query.filter(SNMPCurrent.site_id == site_id)
+    
+    current_data = query.order_by(SNMPCurrent.last_updated.desc()).limit(100).all()
+    
+    return jsonify([{
+        "site": data.site.name,
+        "label": data.label,
+        "value": data.value,
+        "last_updated": data.last_updated.strftime("%Y-%m-%d %H:%M:%S")
+    } for data in current_data])
