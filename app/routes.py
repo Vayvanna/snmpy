@@ -59,12 +59,11 @@ def index():
     }
     return render_template('index.html', stats=stats)
 
-@main_bp.route('/map')#default to listenings to GET requests.
+@main_bp.route('/map')
 def map():
-    # Pull all site records from DB
+    # All sites
     sites = Site.query.all()
 
-    # Convert each site to a dictionary for frontend
     locations = {
         str(site.id): {
             "name": site.name,
@@ -73,7 +72,26 @@ def map():
             "status": site.status
         } for site in sites
     }
-    return render_template("map.html", locations=locations)
+
+    # All SNMPCurrent entries
+    snmp_data = SNMPCurrent.query.join(Site).all()
+
+    # Group all SNMP entries under their site_id
+    snmps = {}
+    for snmp in snmp_data:
+        site_id = str(snmp.site_id)
+        if site_id not in snmps:
+            snmps[site_id] = []
+
+        snmps[site_id].append({
+            "label": snmp.label,
+            "value": snmp.value,
+            "oid": snmp.oid,
+            "last_updated": snmp.last_updated.strftime("%Y-%m-%d %H:%M:%S") if snmp.last_updated else None
+        })
+
+    return render_template("map.html", locations=locations, snmps=snmps)
+
 
 @main_bp.route('/api/sites_status')
 def api_sites_status():
