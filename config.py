@@ -4,7 +4,7 @@ import os
 from flask import app
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://nms_user:vayvanna@localhost/nms_db")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://nms_user:vayvanna@db:5432/nms_db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(seconds=600) 
 
