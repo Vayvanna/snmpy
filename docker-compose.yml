@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/app # mounting the /app on .
+    env_file:
+      - .env
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: nms_db
+      POSTGRES_USER: nms_user
+      POSTGRES_PASSWORD: vayvanna 
+    volumes:
+      - pgdata:/var/lib/postgresql/data # the volume mount, -> the /var/lib/psql/data stuff is mounted actly in the volume.
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # the init.sql path of psql is mounted on our docker host. on ./init.sql 
+
+volumes:
+  pgdata: # the actual volume that we create, its only one and its for the pgdata (postgreSQL db), since we mounted its /var/lib/postgresql/data into it.
