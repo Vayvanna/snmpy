@@ -12,12 +12,14 @@ from core.init_oids import sync_snmp_oids  #####importing the init_admin functio
 # db = SQLAlchemy() 
 
 def create_app():  ## this function is to configure the Flask app.
+
     app = Flask(__name__) ## instance of app Flask
     # app = Flask(__name__, template_folder='app/templates') ## instance of app Flask
 
     app.config.from_object(Config) # 
     db.init_app(app) ## binding db to the app. This connects your Flask app to the database via SQLAlchemy
-
+    with app.app_context():
+        db.create_all()
     ###we have the PostgreSQL running its engine in the linux env, and here we are linking it to be the db of our app. which we are creating atm.
     # the configuration of the connection of these are in snmpy/config.py
 
@@ -25,7 +27,7 @@ def create_app():  ## this function is to configure the Flask app.
     app.register_blueprint(main_bp) ## registering our main mini-app inside the app.
     
     with app.app_context():
-        db.create_all()     
+        #db.create_all()     
         sync_sites_from_json()  
         sync_snmp_oids()         # ✅ auto-import on startup # to disable tempo
         from core.poller import start_background_thread
