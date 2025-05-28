@@ -25,6 +25,7 @@ def create_app():  ## this function is to configure the Flask app.
     app.register_blueprint(main_bp) ## registering our main mini-app inside the app.
     
     with app.app_context():
+        db.create_all()     
         sync_sites_from_json()  
         sync_snmp_oids()         # ✅ auto-import on startup # to disable tempo
         from core.poller import start_background_thread
