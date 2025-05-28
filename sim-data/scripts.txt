@@ -1,0 +1,12 @@
+sudo apt update
+https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+https://docs.docker.com/compose/install/linux/
+sudo apt-get update
+sudo apt-get install docker-compose-plugin
+
+git clone repo-name.com//
+docker compose up --build
+sudo apt install snmpsim
+snmpsimd.py --data-dir=sim-data --agent-udpv4-endpoint=:1161
+change core/helpersofsn.py line 22
+simply docker exec -it snmpy-web-1 bash -> snmpsimd.py --data-dir=sim-data --agent-udpv4-endpoint=:1161  -make sure u have 127.0.0.1 inside the /app/core/helpersofsn.py which is mounted on .
