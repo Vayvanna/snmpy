@@ -4,12 +4,6 @@ from pysnmp.hlapi import (
     ObjectType, ObjectIdentity
 )
 
-
-
-
-
-
-
 def snmp_get(ip, community, oid, port=161, timeout=1, retries=1):
     """Perform SNMP GET and return value as string or None if invalid."""
     # print(f"{ip} is of type {type(ip)}")

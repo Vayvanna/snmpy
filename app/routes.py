@@ -6,8 +6,11 @@ from db.models import Site, SiteLogs, SNMPMetricLog, SNMPCurrent, SNMPOID   # SQ
 from app.extensions import db
 from utils.auth import login_required
 main_bp = Blueprint('main', __name__)# creates blueprint object called main_bp
+from datetime import datetime, timedelta, timezone
+from core.helpersofsn import snmp_get
 
 
+from core.poller import ping_site,poll_sites
 
 
 from flask import render_template, request, redirect, session, url_for, flash
@@ -218,3 +221,48 @@ def api_snmp_current():
         "value": data.value,
         "last_updated": data.last_updated.strftime("%Y-%m-%d %H:%M:%S")
     } for data in current_data])
+
+
+
+
+
+@main_bp.route('/api/manual_ping', methods=['POST'])
+def manual_ping():
+    site_id = request.json.get('site_id')
+    site = Site.query.get(site_id)
+    if not site:
+        return jsonify({"error": "Invalid site ID"}), 400
+    default_time = lambda: datetime.utcnow() + timedelta(hours=1)
+    status = ping_site(site.ip_address)
+    timestamp = default_time()
+
+    return jsonify({
+        "ping_sent": True,
+        "ip": site.ip_address,
+        "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+        "site_name": site.name,
+        "status": status  # optional, remove if you really don't care
+    })
+
+
+
+@main_bp.route('/api/manual_snmp', methods=['POST'])
+def manual_snmp():
+    site_id = request.json.get('site_id')
+    oid = request.json.get('oid')
+    site = Site.query.get(site_id)
+    port = SNMPOID.query.get(site_id) or 1161
+    if not site or not oid:
+        return jsonify({"error": "Invalid input"}), 400
+
+    community = site.snmp_community or "public"
+    
+    value = snmp_get(site.ip_address, community, oid, port)
+    return jsonify({"value": value or "N/A"})
+
+@main_bp.route('/manual')
+@login_required
+def manual():
+    sites = Site.query.all()
+    oids = SNMPOID.query.all()
+    return render_template("manual.html", sites=sites, oids=oids)
