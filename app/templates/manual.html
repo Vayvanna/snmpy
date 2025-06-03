@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual Tester</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    #pingResult {
+    color: black;
+    }
+    #snmpResult {
+    color: black;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2, h3 {
+      margin-bottom: 10px;
+    }
+    select, button {
+      padding: 5px 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+    p {
+      background: #f8f8f8;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔧 Manual ICMP/SNMP Tester</h2>
+
+    <div>
+      <label for="siteSelect">Select Site:</label><br>
+      <select id="siteSelect">
+        {% for site in sites %}
+          <option value="{{ site.id }}">{{ site.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div style="margin-top:20px;">
+      <h3>🛰 ICMP Ping</h3>
+      <button onclick="ping()">Ping Selected Site</button>
+      <p id="pingResult">—</p>
+    </div>
+
+    <div style="margin-top:20px;">
+      <h3>📡 SNMP Query</h3>
+      <label for="oidSelect">OID Label:</label><br>
+      <select id="oidSelect">
+        {% for oid in oids %}
+          <option value="{{ oid.oid }}">{{ oid.label }} ({{ oid.oid }})</option>
+        {% endfor %}
+      </select>
+      <button onclick="snmp()">Query SNMP</button>
+      <p id="snmpResult">—</p>
+    </div>
+  </div>
+
+<script>
+  // alert("JS is running");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log("Manual Tester JS loaded");
+
+    window.ping = async function () {
+      const siteId = document.getElementById("siteSelect").value;
+      const result = document.getElementById("pingResult");
+      result.textContent = "Pinging...";
+
+      try {
+        const res = await fetch("/api/manual_ping", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ site_id: siteId })
+        });
+
+        const data = await res.json();
+        console.log("PING DATA:", data);
+        result.textContent = `Status: ${data.status} | IP: ${data.ip} | Time: ${data.timestamp}`;
+      } catch (err) {
+        result.textContent = "Error: " + err.message;
+        console.error("PING ERROR:", err);
+      }
+    };
+
+    window.snmp = async function () {
+      const siteId = document.getElementById("siteSelect").value;
+      const oid = document.getElementById("oidSelect").value;
+      const result = document.getElementById("snmpResult");
+      result.textContent = "Querying...";
+
+      try {
+        const res = await fetch("/api/manual_snmp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ site_id: siteId, oid: oid })
+        });
+
+        if (!res.ok) throw new Error("SNMP query failed");
+
+        const data = await res.json();
+        result.textContent = `Value: ${data.value}`;
+      } catch (err) {
+        result.textContent = "Error: " + err.message;
+      }
+    };
+  });
+</script>
+
+</body>
+</html>
