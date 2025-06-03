@@ -5,7 +5,8 @@ from flask import app
 
 class Config:
     # SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://nms_user:vayvanna@localhost/nms_db")
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://nms_user:vayvanna@localhost/nms_db")
+    # SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://nms_user:vayvanna@localhost/nms_db")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://nms_user:vayvanna@db:5432/nms_db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(seconds=600) 
 
@@ -13,6 +14,13 @@ class Config:
 # This file just holds the connection URL (and maybe other settings):
 
 
+
+# Add your custom settings here
+
+
+
+
+# This file just holds the connection URL (and maybe other settings):
 
     # Add your custom settings here
     USE_AUTH = False
@@ -29,3 +37,10 @@ class Config:
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
     TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
     TELEGRAM_CHAT_ID2 = os.getenv("TELEGRAM_CHAT_ID2")
+
+
+
+# # LOGIN_USERNAME = 'admin'
+#     LOGIN_USERNAME= os.getenv("LOGIN_USERNAME")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    PERMANENT_SESSION_LIFETIME = timedelta(seconds=600) 
