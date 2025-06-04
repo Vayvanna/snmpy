@@ -96,19 +96,48 @@ def map():
     return render_template("map.html", locations=locations, snmps=snmps)
 
 
+from sqlalchemy.orm import aliased
+from sqlalchemy import desc
+
 @main_bp.route('/api/sites_status')
 def api_sites_status():
-    # Return the same structure as /map but as JSON API
+    # Subquery to get the latest log entry per site
+    latest_log_subq = (
+        db.session.query(
+            SiteLogs.site_id,
+            func.max(SiteLogs.timestamp).label('max_timestamp')
+        )
+        .group_by(SiteLogs.site_id)
+        .subquery()
+    )
+
+    # Join SiteLogs with the subquery to get latest log per site
+    latest_logs = (
+        db.session.query(SiteLogs)
+        .join(latest_log_subq, 
+              (SiteLogs.site_id == latest_log_subq.c.site_id) & 
+              (SiteLogs.timestamp == latest_log_subq.c.max_timestamp))
+        .all()
+    )
+
+    # Build a dictionary of site_id to latest latency
+    latency_by_site = {log.site_id: log.latency for log in latest_logs}
+
+    # Now prepare site data and include the latest latency
     sites = Site.query.all()
     data = {
         str(site.id): {
             "name": site.name,
             "lat": site.latitude,
             "lon": site.longitude,
-            "status": site.status
-        } for site in sites
+            "status": site.status,
+            "latency": latency_by_site.get(site.id, None)  # fallback None if no logs
+        }
+        for site in sites
     }
+
     return jsonify(data)
+
 
 # Removed old hardcoded ping and status code using full_site_status
 # All dynamic status and info is now pulled from PostgreSQL via SQLAlchemy
@@ -178,7 +207,8 @@ def api_logs():
         {
             "timestamp": log.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
             "site": log.site.name,
-            "status": log.status
+            "status": log.status,
+            "latency": log.latency
         }
         for log in logs
     ])

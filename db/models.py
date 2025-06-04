@@ -45,6 +45,8 @@ class SiteLogs(db.Model):
     timestamp = db.Column(db.DateTime, default=default_time)
 
     status = db.Column(db.String(10))
+    latency = db.Column(db.Float, nullable=True)  # ping response time in ms
+
 
     site = db.relationship('Site', backref='logs')
 

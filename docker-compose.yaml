@@ -1,4 +1,4 @@
-version: "3.9"
+# version: "3.9"
 
 services:
   web:
@@ -9,7 +9,8 @@ services:
       FLASK_APP: run.py
       FLASK_ENV: development
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - .:/app # mounting the /app on .
     env_file:
@@ -26,6 +27,10 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data # the volume mount, -> the /var/lib/psql/data stuff is mounted actly in the volume.
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql # the init.sql path of psql is mounted on our docker host. on ./init.sql 
-
+    healthcheck:
+      test: ["CMD","pg_isready" ,"-d" ,"nms_db" ,"-U" ,"nms_user"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
 volumes:
   pgdata: # the actual volume that we create, its only one and its for the pgdata (postgreSQL db), since we mounted its /var/lib/postgresql/data into it.
