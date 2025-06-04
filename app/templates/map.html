@@ -59,6 +59,16 @@
     return table;
   }
 
+  function getLatencyColor(latency, status) {
+    if (status === "down" || latency === null) return "black";
+    if (latency < 10) return "limegreen";
+    if (latency < 50) return "yellowgreen";
+    if (latency < 100) return "gold";
+    if (latency < 200) return "orange";
+    if (latency < 400) return "orangered";
+    return "darkred";
+  }
+
   async function loadMarkers() {
     try {
       const response = await fetch("/api/sites_status");
@@ -68,7 +78,8 @@
         const site = data[id];
         if (!site.lat || !site.lon) continue;
 
-        const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+        const color = getLatencyColor(site.latency, site.status?.toLowerCase());
+
 
         const marker = L.circleMarker([site.lat, site.lon], {
           radius: 8,
@@ -101,7 +112,8 @@
 
       for (const id in data) {
         const site = data[id];
-        const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+        const color = getLatencyColor(site.latency, site.status?.toLowerCase());
+
 
         if (!markers[id]) continue;
 
@@ -125,6 +137,29 @@
   loadMarkers();
   setInterval(updateSiteStatuses, 15000);
 </script>
+<div id="legend" style="
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  z-index: 1000;
+  color: black;
+">
+  <strong>Latency Legend</strong><br>
+  <span style="color: limegreen; display: inline;">●</span> &lt;10ms<br>
+  <span style="color: yellowgreen; display: inline;">●</span> 10–50ms<br>
+  <span style="color: gold; display: inline;">●</span> 50–100ms<br>
+  <span style="color: orange; display: inline;">●</span> 100–200ms<br>
+  <span style="color: orangered; display: inline;">●</span> 200–400ms<br>
+  <span style="color: darkred; display: inline;">●</span> &gt;400ms<br>
+  <span style="color: black; display: inline;">●</span> Down / No Response
+</div>
+
 
 </body>
 
