@@ -19,6 +19,7 @@ def create_app():  ## this function is to configure the Flask app.
     app.config.from_object(Config) # 
     db.init_app(app) ## binding db to the app. This connects your Flask app to the database via SQLAlchemy
     with app.app_context():
+        # db.drop_all()
         db.create_all()
     ###we have the PostgreSQL running its engine in the linux env, and here we are linking it to be the db of our app. which we are creating atm.
     # the configuration of the connection of these are in snmpy/config.py

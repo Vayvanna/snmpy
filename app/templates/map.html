@@ -37,88 +37,95 @@
     const snmps = {{ snmps | tojson }};
   </script>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    const map = L.map('map').setView([34.5, 9.3], 6);
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([34.5, 9.3], 6);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-    const markers = {};
+  const markers = {};
 
-    function formatSNMPTable(snmpEntries) {
-      if (!snmpEntries || snmpEntries.length === 0) return "<i>No SNMP data</i>";
-      let table = '<table style="width:100%; font-size: 0.9rem;">';
-      for (const entry of snmpEntries) {
-        table += `<tr><td><b>${entry.label}</b></td><td>${entry.value}</td></tr>`;
-      }
-      table += '</table>';
-      return table;
+  function formatSNMPTable(snmpEntries) {
+    if (!snmpEntries || snmpEntries.length === 0) return "<i>No SNMP data</i>";
+    let table = '<table style="width:100%; font-size: 0.9rem;">';
+    for (const entry of snmpEntries) {
+      table += `<tr><td><b>${entry.label}</b></td><td>${entry.value}</td></tr>`;
     }
+    table += '</table>';
+    return table;
+  }
 
-    async function loadMarkers() {
-      try {
-        const response = await fetch("/api/sites_status");
-        const data = await response.json();
+  async function loadMarkers() {
+    try {
+      const response = await fetch("/api/sites_status");
+      const data = await response.json();
 
-        for (const id in data) {
-          const site = data[id];
-          if (!site.lat || !site.lon) continue;
+      for (const id in data) {
+        const site = data[id];
+        if (!site.lat || !site.lon) continue;
 
-          const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+        const color = site.status?.toLowerCase() === "up" ? "green" : "red";
 
-          const marker = L.circleMarker([site.lat, site.lon], {
-            radius: 8,
-            color,
-            fillColor: color,
-            fillOpacity: 0.9
-          }).addTo(map);
+        const marker = L.circleMarker([site.lat, site.lon], {
+          radius: 8,
+          color,
+          fillColor: color,
+          fillOpacity: 0.9
+        }).addTo(map);
 
-          const snmpTable = formatSNMPTable(snmps[id]);
-          marker.bindPopup(`
-            <b>${site.name}</b><br>
-            Status: <span style="color:${color}; font-weight:bold">${site.status}</span><br>
-            ${snmpTable}
-          `);
+        const snmpTable = formatSNMPTable(snmps[id]);
+        const latency = site.latency !== null ? `${site.latency} ms` : 'N/A';
 
-          markers[id] = marker;
-        }
-      } catch (err) {
-        console.error("Failed to load markers:", err);
+        marker.bindPopup(`
+          <b>${site.name}</b><br>
+          Status: <span style="color:${color}; font-weight:bold">${site.status}</span><br>
+          Latency: ${latency}<br>
+          ${snmpTable}
+        `);
+
+        markers[id] = marker;
       }
+    } catch (err) {
+      console.error("Failed to load markers:", err);
     }
+  }
 
-    async function updateSiteStatuses() {
-      try {
-        const res = await fetch("/api/sites_status");
-        const data = await res.json();
+  async function updateSiteStatuses() {
+    try {
+      const res = await fetch("/api/sites_status");
+      const data = await res.json();
 
-        for (const id in data) {
-          const site = data[id];
-          const color = site.status?.toLowerCase() === "up" ? "green" : "red";
+      for (const id in data) {
+        const site = data[id];
+        const color = site.status?.toLowerCase() === "up" ? "green" : "red";
 
-          if (!markers[id]) continue;
+        if (!markers[id]) continue;
 
-          markers[id].setStyle({ color, fillColor: color });
+        markers[id].setStyle({ color, fillColor: color });
 
-          const snmpTable = formatSNMPTable(snmps[id]);
-          markers[id].setPopupContent(`
-            <b>${site.name}</b><br>
-            Status: <span style="color:${color}; font-weight:bold">${site.status}</span><br>
-            ${snmpTable}
-          `);
-        }
-      } catch (err) {
-        console.error("Error updating statuses:", err);
+        const snmpTable = formatSNMPTable(snmps[id]);
+        const latency = site.latency !== null ? `${site.latency} ms` : 'N/A';
+
+        markers[id].setPopupContent(`
+          <b>${site.name}</b><br>
+          Status: <span style="color:${color}; font-weight:bold">${site.status}</span><br>
+          Latency: ${latency}<br>
+          ${snmpTable}
+        `);
       }
+    } catch (err) {
+      console.error("Error updating statuses:", err);
     }
+  }
 
-    loadMarkers();
-    setInterval(updateSiteStatuses, 15000);
-  </script>
+  loadMarkers();
+  setInterval(updateSiteStatuses, 15000);
+</script>
+
 </body>
 
 </html>

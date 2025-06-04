@@ -12,15 +12,17 @@ from db.models import SNMPMetricLog, SNMPCurrent, default_time  # if not already
 
 
 
-
+import re
 
 def ping_site(ip):
-    """Pings a site using ICMP."""
     try:
-        subprocess.check_output(["ping", "-c", "1", "-W", "3", ip], stderr=subprocess.DEVNULL)
-        return "up"
+        output = subprocess.check_output(["ping", "-c", "1", "-W", "3", ip], stderr=subprocess.DEVNULL, text=True)
+        # Extract latency from the output: e.g. "time=12.345 ms"
+        match = re.search(r'time=(\d+\.?\d*)\s*ms', output)
+        latency = float(match.group(1)) if match else None
+        return "up", latency
     except subprocess.CalledProcessError:
-        return "down"
+        return "down", None
 
 def poll_sites(app):
     """Continuously poll all sites and update their status in the DB."""
@@ -39,15 +41,18 @@ def poll_sites(app):
                 # )
                 # db.session.add(log)
                 old_status = site.status
-                result = ping_site(site.ip_address)
+                result, latency = ping_site(site.ip_address)
                 new_status = result
-
+                if result == "up":
+                    print(f"[✓] {site.name} responded in {latency} ms")
+                else:
+                    print(f"[✗] {site.name} is down")
                 if old_status != new_status:
                     msg = f"🚨 Site {site.name} changed status: {old_status.upper()} → {new_status.upper()}"
                     send_alert(msg, site_id=site.id, status=new_status)
 
                 site.status = result  # Now update
-                log = SiteLogs(site_id=site.id, status=result)
+                log = SiteLogs(site_id=site.id, status=result, latency=latency)
                 db.session.add(log)
 
                
