@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="5">
+  <title>Recent Alerts</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+  <style>
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px; border-bottom: 1px solid #ccc; text-align: left; }
+    th { background: #f3f3f3; }
+    th {
+  color: black;
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+  </style>
+</head>
+<body>
+    <div class="dashboard-container">
+    <header class="dashboard-header">
+    <h1>SNMPy Network Analytics</h1>
+    <nav class="main-nav">
+        <a href="/" class="nav-link">🏠 Home</a>
+        <a href="/snmp" class="nav-link">📡 SNMP Monitor</a>
+        <a href="/map" class="nav-link">🗺 Map</a>
+        <a href="/charts" class="nav-link">📊 Charts</a>
+        <a href="/admin" class="nav-link">⚙️ Admin</a>
+        <a href="/logs" class="nav-link">🪵 Logs</a>
+        <a href="/manual" class="nav-link">📍 Manual Testing</a>
+    </nav>
+    </header>
+  <h2>🚨 Recent Alerts</h2>
+  <table>
+    <tr>
+      <th>Timestamp</th>
+      <th>Site</th>
+      <th>Status</th>
+      <th>Message</th>
+    </tr>
+    {% for alert in alerts %}
+    <tr>
+      <td>{{ alert.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+      <td>{{ alert.site.name }}</td>
+      <td><strong style="color:{{ 'red' if alert.status == 'down' else 'green' }}">{{ alert.status }}</strong></td>
+      <td>{{ alert.message }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
+
+
