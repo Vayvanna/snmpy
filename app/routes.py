@@ -296,3 +296,16 @@ def manual():
     sites = Site.query.all()
     oids = SNMPOID.query.all()
     return render_template("manual.html", sites=sites, oids=oids)
+
+
+@main_bp.route('/alerts')
+@login_required
+def recent_alerts():
+    from db.models import Alert
+    alerts = (
+        Alert.query
+        .order_by(Alert.timestamp.desc())
+        .limit(50)
+        .all()
+    )
+    return render_template('alerts.html', alerts=alerts)

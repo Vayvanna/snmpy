@@ -50,12 +50,17 @@ def poll_sites(app):
                 if old_status != new_status:
                     msg = f"🚨 Site {site.name} changed status: {old_status.upper()} → {new_status.upper()}"
                     send_alert(msg, site_id=site.id, status=new_status)
+                    
+                    # ✅ insert alert into Alert table
+                    db.session.add(Alert(
+                        site_id=site.id,
+                        status=new_status,
+                        message=msg
+                    ))
 
                 site.status = result  # Now update
                 log = SiteLogs(site_id=site.id, status=result, latency=latency)
                 db.session.add(log)
-
-               
 
         # after adding snmp oids per site
         # after adding snmp oids per site
@@ -99,8 +104,6 @@ def poll_sites(app):
                                     value=value,
                                     last_updated=default_time()
                                 ))
-
-
 
             db.session.commit()  # Save both status update + logs
             time.sleep(15)  # Next polling round

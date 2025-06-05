@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Manual Tester</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
   <style>
     #pingResult {
     color: black;
@@ -34,9 +34,33 @@
       border-radius: 5px;
       font-family: monospace;
     }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
+
+      <div class="dashboard-container">
+        <header class="dashboard-header">
+          <h1>SNMPy Network Analytics</h1>
+          <nav class="main-nav">
+            <a href="/" class="nav-link">🏠 Home</a>
+            <a href="/snmp" class="nav-link">📡 SNMP Monitor</a>
+            <a href="/map" class="nav-link">🗺 Map</a>
+            <a href="/alerts" class="nav-link">🚨 Alerts</a>
+            <a href="/charts" class="nav-link">📊 Charts</a>
+            <a href="/admin" class="nav-link">⚙️ Admin</a>
+            <a href="/logs" class="nav-link">🪵 Logs</a>
+          </nav>
+        </header>
+
   <div class="container">
     <h2>🔧 Manual ICMP/SNMP Tester</h2>
 

@@ -5,6 +5,11 @@
         {"id":"3","name": "Sfax", "lat": 34.7390, "lon": 10.7603, "ip": "172.217.29.195","snmp_community":"site3"},  
         {"id":"4","name": "Hammamet", "lat": 36.4058, "lon": 10.6047, "ip": "172.217.161.195","snmp_community":"site4"},  
         {"id":"5","name": "Nabeul", "lat": 36.4480, "lon": 10.7200, "ip": "8.8.4.4","snmp_community":"site5"},  
-        {"id":"6","name": "Sousse-Simulated-Dev", "lat": 35.8318, "lon": 10.6387, "ip": "142.250.74.3","snmp_community":"site6"}
+        {"id":"6","name": "Sousse", "lat": 35.8318, "lon": 10.6387, "ip": "142.250.74.3","snmp_community":"site6"},
+        {"id":"7","name": "Kairouan", "lat": 35.6780, "lon": 10.0987, "ip": "192.168.100.195","snmp_community":"site7"},
+        {"id":"8","name": "Gabes", "lat": 33.8800, "lon": 10.0900, "ip": "1.1.1.1","snmp_community":"site8"},
+        {"id":"9","name": "Zaghouan", "lat": 36.4031, "lon": 10.1418, "ip": "1.1.1.3","snmp_community":"site9"},
+        {"id":"10","name": "Jendouba", "lat": 36.4959, "lon": 8.7858, "ip": "8.8.4.4","snmp_community":"site10"},
+        {"id":"10","name": "Kasserine", "lat": 35.1679, "lon": 8.8273, "ip": "8.8.4.4","snmp_community":"site11"}
     ]
 }

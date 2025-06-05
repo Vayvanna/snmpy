@@ -170,3 +170,17 @@ body {
 .main-nav a:hover {
     border-color: #42a5f5;
 }
+
+
+.site-name-label .label-text {
+  background: rgba(255, 255, 255, 0.85);
+  color: black;
+  font-weight: bold;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid #666;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
