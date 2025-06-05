@@ -22,10 +22,11 @@
       <nav class="main-nav">
         <a href="/" class="nav-link">🏠 Home</a>
         <a href="/snmp" class="nav-link">📡 SNMP Monitor</a>
-        <a href="/map" class="nav-link">🗺 Map</a>
+        <a href="/alerts" class="nav-link">🚨 Alerts</a>
         <a href="/charts" class="nav-link">📊 Charts</a>
         <a href="/admin" class="nav-link">⚙️ Admin</a>
         <a href="/logs" class="nav-link">🪵 Logs</a>
+        <a href="/manual" class="nav-link">📍 Manual Testing</a>
       </nav>
     </header>
   </div>
@@ -48,6 +49,8 @@
   }).addTo(map);
 
   const markers = {};
+  const labels = {};
+
 
   function formatSNMPTable(snmpEntries) {
     if (!snmpEntries || snmpEntries.length === 0) return "<i>No SNMP data</i>";
@@ -87,6 +90,21 @@
           fillColor: color,
           fillOpacity: 0.9
         }).addTo(map);
+        // Add name label for down or high-latency sites
+        if (site.status?.toLowerCase() === "down" || site.latency >= 50) {
+          const nameLabel = L.marker([site.lat + 0.04, site.lon], {
+            icon: L.divIcon({
+              className: 'site-name-label',
+              html: `<div class="label-text">${site.name}</div>`,
+              iconSize: [100, 20],
+              iconAnchor: [50, 20],
+            }),
+            interactive: false
+          }).addTo(map);
+
+          labels[id] = nameLabel;
+        }
+
 
         const snmpTable = formatSNMPTable(snmps[id]);
         const latency = site.latency !== null ? `${site.latency} ms` : 'N/A';
@@ -128,6 +146,27 @@
           Latency: ${latency}<br>
           ${snmpTable}
         `);
+                  // Remove old label
+          if (labels[id]) {
+            map.removeLayer(labels[id]);
+            delete labels[id];
+          }
+
+          // Add name label again if still down or slow
+          if (site.status?.toLowerCase() === "down" || site.latency >= 50) {
+            const nameLabel = L.marker([site.lat + 0.04, site.lon], {
+              icon: L.divIcon({
+                className: 'site-name-label',
+                html: `<div class="label-text">${site.name}</div>`,
+                iconSize: [100, 20],
+                iconAnchor: [50, 20],
+              }),
+              interactive: false
+            }).addTo(map);
+
+            labels[id] = nameLabel;
+          }
+
       }
     } catch (err) {
       console.error("Error updating statuses:", err);
@@ -135,7 +174,7 @@
   }
 
   loadMarkers();
-  setInterval(updateSiteStatuses, 15000);
+  setInterval(updateSiteStatuses, 5000);
 </script>
 <div id="legend" style="
   position: absolute;

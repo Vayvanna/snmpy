@@ -91,3 +91,15 @@ class SNMPOID(db.Model):
 
     def __repr__(self):
         return f"<SNMPOID site_id={self.site_id} oid={self.oid} port={self.port}>"
+
+
+class Alert(db.Model):
+    __tablename__ = 'alerts'
+    id = db.Column(db.Integer, primary_key=True)
+    site_id = db.Column(db.Integer, db.ForeignKey('sites.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=default_time)
+    status = db.Column(db.String(20), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
+    site = db.relationship("Site", backref="alerts")
+    
