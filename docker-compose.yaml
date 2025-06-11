@@ -2,12 +2,20 @@
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        HTTP_PROXY: http://10.10.200.200:8080
+        HTTPS_PROXY: http://10.10.200.200:8080
+        NO_PROXY: localhost,127.0.0.1,db 
     ports:
       - "80:8000"
     environment:
       FLASK_APP: run.py
       FLASK_ENV: development
+      http_proxy: http://10.10.200.200:8080
+      https_proxy: http://10.10.200.200:8080
+      no_proxy: localhost,127.0.0.1,db
     depends_on:
       db:
         condition: service_healthy
