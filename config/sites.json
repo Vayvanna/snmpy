@@ -1,15 +1,28 @@
 {
-    "sites":[
-        {"id":"1","name": "Tunis - Direction IT","lat":36.8144, "lon": 10.1759, "ip": "127.0.0.1","snmp_community":"site1"}, 
-        {"id":"2","name": "Siege","lat": 36.8219, "lon": 10.1942, "ip": "3.39.3.36","snmp_community":"site2"}, 
-        {"id":"3","name": "Sfax", "lat": 34.7390, "lon": 10.7603, "ip": "172.217.29.195","snmp_community":"site3"},  
-        {"id":"4","name": "Hammamet", "lat": 36.4058, "lon": 10.6047, "ip": "172.217.161.195","snmp_community":"site4"},  
-        {"id":"5","name": "Nabeul", "lat": 36.4480, "lon": 10.7200, "ip": "8.8.4.4","snmp_community":"site5"},  
-        {"id":"6","name": "Sousse", "lat": 35.8318, "lon": 10.6387, "ip": "142.250.74.3","snmp_community":"site6"},
-        {"id":"7","name": "Kairouan", "lat": 35.6780, "lon": 10.0987, "ip": "192.168.100.195","snmp_community":"site7"},
-        {"id":"8","name": "Gabes", "lat": 33.8800, "lon": 10.0900, "ip": "1.1.1.1","snmp_community":"site8"},
-        {"id":"9","name": "Zaghouan", "lat": 36.4031, "lon": 10.1418, "ip": "1.1.1.3","snmp_community":"site9"},
-        {"id":"10","name": "Jendouba", "lat": 36.4959, "lon": 8.7858, "ip": "8.8.4.4","snmp_community":"site10"},
-        {"id":"10","name": "Kasserine", "lat": 35.1679, "lon": 8.8273, "ip": "8.8.4.4","snmp_community":"site11"}
-    ]
+  "sites": [
+    {"id": "1", "name": "Bizerte", "lat": 37.2744, "lon": 9.8739, "ip": "172.21.60.200", "snmp_community": "site1"},
+    {"id": "2", "name": "Tunis", "lat": 36.8065, "lon": 10.1815, "ip": "172.21.93.200", "snmp_community": "site2"},
+    {"id": "3", "name": "Ariana", "lat": 36.8665, "lon": 10.1647, "ip": "172.21.51.200", "snmp_community": "site3"},
+    {"id": "4", "name": "Ben Arous", "lat": 36.7533, "lon": 10.2189, "ip": "172.21.53.200", "snmp_community": "site4"},
+    {"id": "5", "name": "Manouba", "lat": 36.8082, "lon": 10.1015, "ip": "172.21.52.200", "snmp_community": "site5"},
+    {"id": "6", "name": "Nabeul", "lat": 36.4510, "lon": 10.7350, "ip": "172.21.56.200", "snmp_community": "site6"},
+    {"id": "7", "name": "Zaghouan", "lat": 36.4020, "lon": 10.1429, "ip": "172.21.59.200", "snmp_community": "site7"},
+    {"id": "8", "name": "Béja", "lat": 36.7333, "lon": 9.1833, "ip": "172.21.62.200", "snmp_community": "site8"},
+    {"id": "9", "name": "Jendouba", "lat": 36.5011, "lon": 8.7802, "ip": "172.21.63.200", "snmp_community": "site9"},
+    {"id": "10", "name": "Le Kef", "lat": 36.1742, "lon": 8.7049, "ip": "172.21.66.200", "snmp_community": "site10"},
+    {"id": "11", "name": "Siliana", "lat": 36.0844, "lon": 9.3708, "ip": "172.21.67.200", "snmp_community": "site11"},
+    {"id": "12", "name": "Sousse", "lat": 35.8256, "lon": 10.6084, "ip": "172.21.71.200", "snmp_community": "site12"},
+    {"id": "13", "name": "Monastir", "lat": 35.7770, "lon": 10.8262, "ip": "172.21.74.200", "snmp_community": "site13"},
+    {"id": "14", "name": "Mahdia", "lat": 35.5047, "lon": 11.0622, "ip": "172.21.77.200", "snmp_community": "site14"},
+    {"id": "15", "name": "Kairouan", "lat": 35.6769, "lon": 10.1000, "ip": "172.21.68.200", "snmp_community": "site15"},
+    {"id": "16", "name": "Kasserine", "lat": 35.1676, "lon": 8.8365, "ip": "172.21.69.200", "snmp_community": "site16"},
+    {"id": "17", "name": "Sidi Bouzid", "lat": 35.0382, "lon": 9.4859, "ip": "172.21.70.200", "snmp_community": "site17"},
+    {"id": "18", "name": "Gafsa", "lat": 34.4250, "lon": 8.7842, "ip": "172.21.83.200", "snmp_community": "site18"},
+    {"id": "19", "name": "Tozeur", "lat": 33.9197, "lon": 8.1335, "ip": "172.21.84.200", "snmp_community": "site19"},
+    {"id": "20", "name": "Kebili", "lat": 33.7078, "lon": 8.9720, "ip": "172.21.86.200", "snmp_community": "site20"},
+    {"id": "21", "name": "Gabès", "lat": 33.8818, "lon": 10.0982, "ip": "172.21.87.200", "snmp_community": "site21"},
+    {"id": "22", "name": "Médenine", "lat": 33.3549, "lon": 10.5055, "ip": "172.21.88.200", "snmp_community": "site22"},
+    {"id": "23", "name": "Tataouine", "lat": 32.9297, "lon": 10.4518, "ip": "172.21.91.200", "snmp_community": "site23"},
+    {"id": "24", "name": "Sfax", "lat": 34.7406, "lon": 10.7603, "ip": "172.21.132.200", "snmp_community": "site24"}
+  ]
 }
