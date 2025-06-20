@@ -2,45 +2,61 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Map View</title>
+  <title>Network Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <!-- using the stlyes.css too -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
-
   <style>
-    #map { height: 90vh; width: 100%; }
-    body { margin: 0; font-family: sans-serif; }
-    h2 { text-align: center; margin: 1em 0; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+    .label-text {
+      background: rgba(255,255,255,0.8);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: black;
+    }
+    #legend {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-size: 0.85rem;
+      line-height: 1.4;
+      z-index: 1000;
+      color: black;
+    }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <header class="dashboard-header">
-      <h1>SNMPy Network Monitoring - Map of Sites</h1>
-      <nav class="main-nav">
-        <a href="/" class="nav-link">🏠 Home</a>
-        <a href="/snmp" class="nav-link">📡 SNMP Monitor</a>
-        <a href="/alerts" class="nav-link">🚨 Alerts</a>
-        <a href="/charts" class="nav-link">📊 Charts</a>
-        <a href="/admin" class="nav-link">⚙️ Admin</a>
-        <a href="/logs" class="nav-link">🪵 Logs</a>
-        <a href="/manual" class="nav-link">📍 Manual Testing</a>
-      </nav>
-    </header>
-  </div>
 
-  <div id="map"></div>
+<div id="map"></div>
 
-  <!-- Load SNMP data into JS -->
-  <script>
-    const snmps = {{ snmps | tojson }};
-  </script>
+<div id="legend">
+  <strong>Latency Legend</strong><br>
+  <span style="color: limegreen;">●</span> &lt;10ms<br>
+  <span style="color: blue;">●</span> 10–50ms<br>
+  <span style="color: gold;">●</span> 50–100ms<br>
+  <span style="color: orange;">●</span> 100–200ms<br>
+  <span style="color: orangered;">●</span> 200–400ms<br>
+  <span style="color: darkred;">●</span> &gt;400ms<br>
+  <span style="color: black;">●</span> Down / No Response
+</div>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
+  const snmps = {{ snmps | tojson }};
   const map = L.map('map').setView([34.5, 9.3], 6);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -50,7 +66,6 @@
 
   const markers = {};
   const labels = {};
-
 
   function formatSNMPTable(snmpEntries) {
     if (!snmpEntries || snmpEntries.length === 0) return "<i>No SNMP data</i>";
@@ -65,7 +80,7 @@
   function getLatencyColor(latency, status) {
     if (status === "down" || latency === null) return "black";
     if (latency < 10) return "limegreen";
-    if (latency < 50) return "yellowgreen";
+    if (latency < 50) return "blue";
     if (latency < 100) return "gold";
     if (latency < 200) return "orange";
     if (latency < 400) return "orangered";
@@ -83,14 +98,13 @@
 
         const color = getLatencyColor(site.latency, site.status?.toLowerCase());
 
-
         const marker = L.circleMarker([site.lat, site.lon], {
           radius: 8,
           color,
           fillColor: color,
           fillOpacity: 0.9
         }).addTo(map);
-        // Add name label for down or high-latency sites
+
         if (site.status?.toLowerCase() === "down" || site.latency >= 50) {
           const nameLabel = L.marker([site.lat + 0.04, site.lon], {
             icon: L.divIcon({
@@ -101,10 +115,8 @@
             }),
             interactive: false
           }).addTo(map);
-
           labels[id] = nameLabel;
         }
-
 
         const snmpTable = formatSNMPTable(snmps[id]);
         const latency = site.latency !== null ? `${site.latency} ms` : 'N/A';
@@ -132,7 +144,6 @@
         const site = data[id];
         const color = getLatencyColor(site.latency, site.status?.toLowerCase());
 
-
         if (!markers[id]) continue;
 
         markers[id].setStyle({ color, fillColor: color });
@@ -146,27 +157,24 @@
           Latency: ${latency}<br>
           ${snmpTable}
         `);
-                  // Remove old label
-          if (labels[id]) {
-            map.removeLayer(labels[id]);
-            delete labels[id];
-          }
 
-          // Add name label again if still down or slow
-          if (site.status?.toLowerCase() === "down" || site.latency >= 50) {
-            const nameLabel = L.marker([site.lat + 0.04, site.lon], {
-              icon: L.divIcon({
-                className: 'site-name-label',
-                html: `<div class="label-text">${site.name}</div>`,
-                iconSize: [100, 20],
-                iconAnchor: [50, 20],
-              }),
-              interactive: false
-            }).addTo(map);
+        if (labels[id]) {
+          map.removeLayer(labels[id]);
+          delete labels[id];
+        }
 
-            labels[id] = nameLabel;
-          }
-
+        if (site.status?.toLowerCase() === "down" || site.latency >= 50) {
+          const nameLabel = L.marker([site.lat + 0.04, site.lon], {
+            icon: L.divIcon({
+              className: 'site-name-label',
+              html: `<div class="label-text">${site.name}</div>`,
+              iconSize: [100, 20],
+              iconAnchor: [50, 20],
+            }),
+            interactive: false
+          }).addTo(map);
+          labels[id] = nameLabel;
+        }
       }
     } catch (err) {
       console.error("Error updating statuses:", err);
@@ -176,30 +184,7 @@
   loadMarkers();
   setInterval(updateSiteStatuses, 5000);
 </script>
-<div id="legend" style="
-  position: absolute;
-  top: 80px;
-  right: 20px;
-  background: white;
-  padding: 10px 14px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  font-size: 0.85rem;
-  line-height: 1.4;
-  z-index: 1000;
-  color: black;
-">
-  <strong>Latency Legend</strong><br>
-  <span style="color: limegreen; display: inline;">●</span> &lt;10ms<br>
-  <span style="color: yellowgreen; display: inline;">●</span> 10–50ms<br>
-  <span style="color: gold; display: inline;">●</span> 50–100ms<br>
-  <span style="color: orange; display: inline;">●</span> 100–200ms<br>
-  <span style="color: orangered; display: inline;">●</span> 200–400ms<br>
-  <span style="color: darkred; display: inline;">●</span> &gt;400ms<br>
-  <span style="color: black; display: inline;">●</span> Down / No Response
-</div>
-
 
 </body>
-
 </html>
+

@@ -14,15 +14,22 @@ from db.models import SNMPMetricLog, SNMPCurrent, default_time  # if not already
 
 import re
 
-def ping_site(ip):
-    try:
-        output = subprocess.check_output(["ping", "-c", "1", "-W", "3", ip], stderr=subprocess.DEVNULL, text=True)
-        # Extract latency from the output: e.g. "time=12.345 ms"
-        match = re.search(r'time=(\d+\.?\d*)\s*ms', output)
-        latency = float(match.group(1)) if match else None
-        return "up", latency
-    except subprocess.CalledProcessError:
-        return "down", None
+def ping_site(ip, max_attempts=4):
+    for attempt in range(max_attempts):
+        try:
+            output = subprocess.check_output(
+                ["ping", "-c", "1", "-W", "3", ip],
+                stderr=subprocess.DEVNULL,
+                text=True
+            )
+            # Extract latency from the output: e.g. "time=12.345 ms"
+            match = re.search(r'time=(\d+\.?\d*)\s*ms', output)
+            latency = float(match.group(1)) if match else None
+            return "up", latency
+        except subprocess.CalledProcessError:
+            time.sleep(0.2)  # short pause before retry
+
+    return "down", None
 
 def poll_sites(app):
     """Continuously poll all sites and update their status in the DB."""

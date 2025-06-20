@@ -34,7 +34,7 @@ class Site(db.Model):
         return self.name
 
     
-default_time = lambda: datetime.utcnow() + timedelta(hours=1)
+default_time = lambda: datetime.utcnow() + timedelta(hours=0)
 
 class SiteLogs(db.Model):
     __tablename__ = 'sitelogs'  # ✅ corrected typo
