@@ -1,178 +1,139 @@
-# SNMPy: Network Monitoring Dashboard for CNAM 🇹🇳
+````markdown
+# 🐳 SNMPy Setup Guide (Branch: `prod-siege`)
 
-SNMPy is a Flask-based web application that visualizes the real-time status of 100+ WAN sites of CNAM Tunisia on a map. It monitors latency and SNMP metrics using ICMP and SNMP polling, with PostgreSQL for persistence and Telegram alerts for incidents.
-
-
-## 🖼️ Screenshots
-
-| Dashboard | Map View + Labels |
-|----------|-------------------|
-| ![Dashboard View](/preview/dashboard.png) | ![Map+Label View](/preview/maplabel.png) |
-
-| SNMP Monitor | Manual Testing |
-|-------------|----------------|
-| ![SNMP Monitor View](/preview/snmp.png) | ![Manual View](/preview/manual.png) |
-
-| Alerts | Charts | DB Table |
-|--------|--------|-----------|
-| ![Alerts View](/preview/alerts.png) | ![Charts View](/preview/charts.png) | ![DB Table View](/preview/dbsc.png) |
-
-
-
+This guide walks you through installing Docker, configuring proxy access (critical in enterprise environments), setting up environment variables, and deploying the SNMPy app using Docker Compose.
 
 ---
 
-## 🌐 Features
-
-- 🗺 **Live Map Dashboard** — Shows WAN sites on a map of Tunisia with real-time latency and SNMP info.
-- 📡 **SNMP Polling** — Polls site-specific OIDs dynamically loaded from JSON.
-- 📶 **ICMP Latency Checks** — Tracks uptime and latency with ping tests.
-- 📈 **Charts & Stats** — Displays site statuses and trends.
-- 🔔 **Telegram Alerts** — Sends downtime/status change alerts with cooldowns.
-- 🔧 **Admin Panel** — Manage SNMP OIDs, logs, and live values via Flask-Admin.
-- ⚙️ **Manual Tools** — Manual ping & SNMP polling from the web UI.
-- 🔄 **Auto-Sync** — Syncs `sites.json` and `snmp_oids.json` into PostgreSQL on server restart.
-
----
-
-## 🐳 Getting Started (via Docker)
-
-### 1. Clone the repo
+## ✅ 1. Install Docker & Docker Compose
 
 ```bash
-git clone https://github.com/your-username/snmpy.git
+sudo apt update
+sudo apt install -y docker.io docker-compose
+```
+
+---
+
+## 👤 2. Enable Docker for Non-root Usage
+
+Add your user to the `docker` group:
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker  # Or log out and log back in
+```
+
+---
+
+## 🌐 3. Configure System-wide Proxy Access
+
+> ⚠️ **Important:** If you're behind a corporate proxy, configure system-wide environment variables to allow internet access for Docker, Git, etc.
+
+Edit `/etc/environment`:
+
+```bash
+sudo nano /etc/environment
+```
+
+Append the following (modify IP and port if needed):
+
+```env
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+http_proxy="http://10.10.200.200:8080"
+https_proxy="http://10.10.200.200:8080"
+no_proxy="localhost,127.0.0.1,localdomain,10.1.10.150"
+```
+
+Apply changes:
+
+```bash
+source /etc/environment
+```
+
+---
+
+## 📁 4. (Optional) Create a Project Directory
+
+```bash
+mkdir -p ~/snmpy
+cd ~/snmpy
+```
+
+---
+
+## 📥 5. Clone the Repository (Branch: `prod-siege`)
+
+```bash
+git clone --branch prod-siege https://github.com/Vayvanna/snmpy.git
 cd snmpy
 ```
 
-### 2. Configure environment variables
+> 📝 At the time of writing, the latest commit is `44718f`.
 
-Edit `.env` and set values:
+(Optional) Checkout a specific commit:
 
-```env
-LOGIN_USERNAME=admin
-LOGIN_PASSWORD=secret
-SECRET_KEY=supersecretkey
-TELEGRAM_BOT_TOKEN=xxxxx
-TELEGRAM_CHAT_ID=xxxxx
+```bash
+git checkout 44718f
 ```
 
-### 3. Run the project
+---
+
+## 🔐 6. Create a `.env` File for Configuration
+
+Create a `.env` file in the root of the repo:
+
+```bash
+nano .env
+```
+
+Paste the following (update secrets if necessary):
+You need to create a TELEGRAM bot and get its token
+and you need the TELEGRAM profile id on the account 
+you expect to receive the notifications on.
+also create a username, password and a secretkey
+```env
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+TELEGRAM_CHAT_ID2=
+LOGIN_USERNAME=
+LOGIN_PASSWORD=
+SECRET_KEY=
+FLASK_APP=run.py
+FLASK_ENV=development
+```
+
+---
+
+## 🐳 7. Build and Start Docker Compose
 
 ```bash
 docker compose up --build
 ```
 
-This launches:
-- `web`: Flask app on `http://localhost` 
-- `db`: PostgreSQL with data persistence via Docker volume
-
-the web app is accessible from anywhere by IP on port 80.
-you might need to add sudo or change port to one higher than 1024.
-in prod we use a proxy for that.
 ---
 
-## 🧠 Project Structure
-
-```
-.
-├── run.py               # Entry point
-├── app/                 # Flask web app (routes, templates, static)
-├── core/                # SNMP polling, ICMP logic, background thread
-├── db/                  # SQLAlchemy models and DB init
-├── config/              # JSON configs for sites and OIDs
-├── utils/               # Telegram alerting, auth
-├── scripts/             # Helper scripts for dev/testing
-├── sim-data/            # SNMP simulator files (.snmprec)
-├── Dockerfile           # Python slim container
-└── docker-compose.yaml  # Runs web + DB
-```
-
----
-
-## 📊 Web Pages
-
-- `/` — Summary dashboard
-- `/map` — Geographic map view of WAN sites
-- `/charts` — Uptime/latency chart logs
-- `/snmp` — SNMP metric table by site
-- `/logs` — ICMP logs
-- `/manual` — Manual ping/SNMP tool
-- `/alerts` — Telegram alert log
-- `/admin` — Admin interface for DB models
-
----
-
-## 🔄 Simulating SNMP (Optional)
-
-To simulate SNMP data using [snmpsim](https://github.com/etingof/snmpsim):
+## 🔁 8. Restart Docker Compose
 
 ```bash
-sudo apt install snmpsim
-snmpsimd.py --data-dir=sim-data --agent-udpv4-endpoint=:1161
+docker compose restart
 ```
 
-Ensure the polling engine inside Docker uses `127.0.0.1` as SNMP target IP.(This is default atm.)
-Currently hardcoded for the snmp_get(). So that you don't have to use localhost for all sites pings.
 ---
 
-## 📦 Dependencies
+## 🧼 9. Remove Docker Containers & Clean Volumes
 
-All Python dependencies are listed in `requirements.txt`, including:
+To fully reset your containers and PostgreSQL volume:
 
-- Flask, SQLAlchemy
-- pysnmp, ping3
-- psycopg2-binary
-- Flask-Admin, Flask-Migrate
-- python-dotenv
-
----
-
-## 🔐 Auth
-
-Basic login is enabled with credentials from `.env`. Admin panel and logs are protected unless `USE_AUTH=False`.
-which is the current settings.
-u can check config file to change timeout as well.
----
-
-## 📬 Alerts
-
-Telegram alerts are sent when a site's status changes. Cooldown logic prevents spam. You can configure tokens and chat IDs in `.env`.
+```bash
+docker compose down
+docker volume rm snmpy_pgdata
+docker compose up --build
+```
 
 ---
 
-## 🏗 Built With
+## ✅ Done
 
-- Python 3.11 + Flask
-- PostgreSQL 15
-- Docker & Docker Compose
-- SQLAlchemy ORM
-- Leaflet.js for mapping
-- Chart.js for statistics
-- Telegram Bot API
+Your SNMPy stack should now be running and accessible locally. Check the logs or use `docker ps` to verify container status.
+````
 
----
-
-## 🧠 Author
-
-Made with ❤️ by Raed Souissi — Network Engineering Intern @ CNAM 🇹🇳  
-> _"Infrastructure isn’t just uptime. It’s visibility, clarity, and control."_  
-
----
-
-## ✅ To Do
-
-- Add SNMP trap support
-- Better alerting logic
-- Enhance frontend UX
-- Export logs to CSV
-- Multi-user auth & RBAC
-
----
-
-## 📄 License
-
-This project is licensed under the **GNU Affero General Public License v3.0**.  
-You are free to use, study, modify, and share it.  
-However, **if you deploy it on a server and expose it publicly**, you must **publish your source code**.
-
-See [`LICENSE`](https://www.gnu.org/licenses/agpl-3.0.html) for full details.

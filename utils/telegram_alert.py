@@ -34,7 +34,7 @@ def send_alert(message, site_id=None,status=None, cooldown=300):
     payload2 = {"chat_id": chat_id2, "text": message, "parse_mode": "Markdown"} # had to change this as asterics* don't get sent well.
     try:
         requests.post(url, json=payload)
-        # requests.post(url, json=payload2)
+        requests.post(url, json=payload2)
         print(f"✅ Alert sent: {message}")
     except Exception as e:
         print(f"❌ Failed to send alert: {e}")
