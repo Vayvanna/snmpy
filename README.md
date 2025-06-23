@@ -1,7 +1,9 @@
-````markdown
+```markdown
 # 🐳 SNMPy Setup Guide (Branch: `prod-siege`)
 
-This guide walks you through installing Docker, configuring proxy access (critical in enterprise environments), setting up environment variables, and deploying the SNMPy app using Docker Compose.
+This guide walks you through installing Docker, configuring proxy access
+(critical in enterprise environments), setting up environment variables,
+and deploying the SNMPy app using Docker Compose.
 
 ---
 
@@ -135,5 +137,5 @@ docker compose up --build
 ## ✅ Done
 
 Your SNMPy stack should now be running and accessible locally. Check the logs or use `docker ps` to verify container status.
-````
+```
 
