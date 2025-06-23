@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 from core.helpersofsn import snmp_get
 from db.models import SNMPMetricLog, SNMPCurrent, default_time  # if not already
-from datetime import datetime, timedelta
+
 
 
 import re
@@ -54,43 +54,18 @@ def poll_sites(app):
                     print(f"[✓] {site.name} responded in {latency} ms")
                 else:
                     print(f"[✗] {site.name} is down")
-
-
-
-
-
                 if old_status != new_status:
-                    now = default_time() 
-                    threshold=now-timedelta(seconds=220)
-                    print(f"[DEBUG] now: {now} (tzinfo: {now.tzinfo})")
-                    print(f"[DEBUG] threshold (now - 220 sec): {threshold} (tzinfo: {threshold.tzinfo})")
-                    # Check if a similar alert has already been sent recently
-                    recent_alert = Alert.query.filter(
-                        Alert.site_id == site.id,
-                        Alert.status == new_status,
-                        Alert.timestamp >= threshold
-                    ).first()
+                    msg = f"🚨 Site {site.name} changed status: {old_status.upper()} → {new_status.upper()}"
+                    send_alert(msg, site_id=site.id, status=new_status)
+                    
+                    # ✅ insert alert into Alert table
+                    db.session.add(Alert(
+                        site_id=site.id,
+                        status=new_status,
+                        message=msg
+                    ))
 
-                    if not recent_alert:
-                        msg = f"🚨 Site {site.name} changed status: {old_status.upper()} → {new_status.upper()}"
-                        send_alert(msg, site_id=site.id, status=new_status)
-
-                        db.session.add(Alert(
-                            site_id=site.id,
-                            status=new_status,
-                            message=msg
-                        ))
-                    else:
-                        print(f"[⚠️] Skipping duplicate alert for {site.name} - already sent recently.")
-
-                site.status = new_status
-
-
-
-
-
-
-
+                site.status = result  # Now update
                 log = SiteLogs(site_id=site.id, status=result, latency=latency)
                 db.session.add(log)
 
