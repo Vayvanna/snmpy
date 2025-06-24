@@ -23,6 +23,7 @@ services:
       - .:/app # mounting the /app on .
     env_file:
       - .env
+    restart: always
 
   db:
     image: postgres:15
@@ -40,5 +41,6 @@ services:
       interval: 2s
       timeout: 5s
       retries: 5
+    restart: always 
 volumes:
   pgdata: # the actual volume that we create, its only one and its for the pgdata (postgreSQL db), since we mounted its /var/lib/postgresql/data into it.
