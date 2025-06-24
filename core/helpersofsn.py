@@ -13,7 +13,7 @@ def snmp_get(ip, community, oid, port=161, timeout=1, retries=1):
     iterator = getCmd(
         SnmpEngine(),
         CommunityData("public", mpModel=0),  # SNMPv1
-        UdpTransportTarget(("127.0.0.1", 1161), timeout=timeout, retries=retries),
+        UdpTransportTarget((ip, 161), timeout=timeout, retries=retries),
         ContextData(),
         ObjectType(ObjectIdentity(oid))
     )
