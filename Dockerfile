@@ -20,5 +20,6 @@ RUN apt-get update && apt-get install -y iputils-ping vim curl && rm -rf /var/li
 COPY . . 
 
 EXPOSE 8000
-CMD ["flask", "run", "--host=0.0.0.0", "--reload", "--port=8000"]
+CMD ["gunicorn", "-w", "4", "--reload", "-b", "0.0.0.0:8000", "run:app"]
+
 # CMD ["python","run.py"]
